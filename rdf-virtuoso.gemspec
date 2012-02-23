@@ -4,7 +4,7 @@ require "rdf-virtuoso/version"
 
 Gem::Specification.new do |s|
   s.name        = "rdf-virtuoso"
-  s.version     = Rdf::Virtuoso::VERSION
+  s.version     = RDF::Virtuoso::VERSION
   s.authors     = ["Peter Kordel"]
   s.email       = ["pkordel@gmail.com"]
   s.homepage    = ""

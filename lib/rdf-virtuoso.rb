@@ -1,6 +1,6 @@
 require "rdf-virtuoso/version"
 
-module Rdf
+module RDF
   module Virtuoso
     # Your code goes here...
   end

@@ -8,6 +8,10 @@ module RDF
       def initialize(endpoint, options = {})
         super(endpoint, options)
       end
+
+      def writable?
+        true
+      end
     end
   end
 end

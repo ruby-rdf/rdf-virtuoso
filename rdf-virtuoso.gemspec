@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Peter Kordel"]
   s.email       = ["pkordel@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{A library for interacting with a Virtuoso rdf store}
+  s.description = %q{A library for interacting with a Virtuoso rdf store}
 
   s.rubyforge_project = "rdf-virtuoso"
 
@@ -22,6 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rdf-spec", "~> 0.3.5"
 
   s.add_runtime_dependency "rdf", "~> 0.3.5"
-  s.add_runtime_dependency 'net-http-persistent', '~> 2.5.2'
+  s.add_runtime_dependency 'sparql-client', '~> 0.0.11'
 
 end

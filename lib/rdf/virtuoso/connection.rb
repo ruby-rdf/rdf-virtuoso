@@ -156,8 +156,7 @@ module RDF::Virtuoso
         :scheme   => url.scheme,
         :userinfo => url.userinfo,
         :host     => url.host,
-        :port     => url.port,
-        :path     => url.path
+        :port     => url.port
       }
     end
 

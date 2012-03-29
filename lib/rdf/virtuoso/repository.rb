@@ -5,20 +5,20 @@ module RDF::Virtuoso
 
   class Repository < RDF::Repository
 
+    attr_reader :url
+    attr_reader :options
     attr_reader :connection
 
-    def initialize(url_or_options, &block)
-      case url_or_options
-      when String
-        initialize(RDF::URI.new(url_or_options, &block))
-      when Hash
-        options = url_or_options.dup
-        @uri  = options.delete(:uri)
-        user = options.delete(:user)
-        password = options.delete(:password)
+    alias_method :uri, :url
+
+    def initialize(url, options={}, &block)
+      @options = options
+      @url = case url
+      when RDF::URI then url
+      else RDF::URI.parse(url)
       end
       #TODO: implement a solid interface to Connection
-      #@connection = Connection.new(url_or_options)
+      @connection = Connection.new(@url, @options)
     end
 
     def supports?(feature)

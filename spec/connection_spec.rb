@@ -37,10 +37,12 @@ describe RDF::Virtuoso::Connection do
   end
 
   it "performs HTTP GET requests" do
-    query = @query.ask.where([:s, :p, :o]).to_s
-    response = @conn.get(query)
-    response.should be_a_kind_of(Net::HTTPSuccess)
-    response.body.should == 'true'
+    VCR.use_cassette('performs HTTP GET requests') do
+      query = @query.ask.where([:s, :p, :o]).to_s
+      response = @conn.get(query)
+      response.should be_a_kind_of(Net::HTTPSuccess)
+      response.body.should == 'true'
+    end
   end
 
   it "supports HTTP POST requests" do
@@ -48,13 +50,15 @@ describe RDF::Virtuoso::Connection do
   end
 
   it "performs HTTP POST requests" do
-    query = @query.create(RDF::URI.new(@graph)).to_s
-    response = @conn.post(query)
-    response.should be_a_kind_of(Net::HTTPSuccess)
-    #TODO: parse body to verify
-    query = @query.drop(RDF::URI.new(@graph)).to_s
-    response = @conn.post(query)
-    response.should be_a_kind_of(Net::HTTPSuccess)
+    VCR.use_cassette('performs HTTP POST requests') do
+      query = @query.create(RDF::URI.new(@graph)).to_s
+      response = @conn.post(query)
+      response.should be_a_kind_of(Net::HTTPSuccess)
+      #TODO: parse body to verify
+      query = @query.drop(RDF::URI.new(@graph)).to_s
+      response = @conn.post(query)
+      response.should be_a_kind_of(Net::HTTPSuccess)
+    end
   end
 
   it "has a URI representation" do

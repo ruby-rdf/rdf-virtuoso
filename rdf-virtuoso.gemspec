@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rdf-spec", "~> 0.3.5"
 
   s.add_runtime_dependency "rdf", "~> 0.3.5"
-  s.add_runtime_dependency 'sparql-client', '~> 0.0.11'
+  s.add_runtime_dependency "vcr"
+  s.add_runtime_dependency "webmock"
 
 end

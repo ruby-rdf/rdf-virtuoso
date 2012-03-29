@@ -1,3 +1,4 @@
+require 'rdf' unless defined?(RDF::URI)
 require 'net/http/persistent'
 
 module RDF::Virtuoso

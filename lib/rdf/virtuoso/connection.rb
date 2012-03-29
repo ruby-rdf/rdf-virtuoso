@@ -251,10 +251,10 @@ module RDF::Virtuoso
     # @return [Net::HTTPResponse]
     def get(query, headers = {}, &block)
       url = self.url.dup
+      url.path = 'sparql'
       url.query_values = {:query => query.to_s}
 
       request = Net::HTTP::Get.new(url.request_uri, @headers.merge(headers))
-      request.basic_auth url.user, url.password if url.user && !url.user.empty?
       response = @http.request url, request
       if block_given?
         block.call(response)
@@ -274,10 +274,10 @@ module RDF::Virtuoso
     # @return [Net::HTTPResponse]
     def post(query, headers = {}, &block)
       url = self.url.dup
-      data = query.to_s
+      url.path = 'sparql-auth'
 
       request = Net::HTTP::Post.new(url.request_uri)
-      request.set_form_data(query: data)
+      request.set_form_data(query: query.to_s)
       request.basic_auth url.user, url.password if url.user && !url.user.empty?
       response = @http.request url, request
 
@@ -286,7 +286,6 @@ module RDF::Virtuoso
       else
         response
       end
-
     end
 
   end

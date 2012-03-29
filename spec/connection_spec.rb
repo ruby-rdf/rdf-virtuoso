@@ -1,8 +1,9 @@
 require_relative 'spec_helper'
+require 'nokogiri'
 
 describe RDF::Virtuoso::Connection do
   before(:each) do
-    @url = RDF::URI("http://reviewer:secret@localhost:8890/sparql-auth")
+    @url = RDF::URI("http://reviewer:secret@localhost:8890")
     @conn = RDF::Virtuoso::Connection.new(@url)
     @graph = 'http://example.org/'
     @query = RDF::Virtuoso::Query
@@ -37,10 +38,9 @@ describe RDF::Virtuoso::Connection do
   end
 
   it "performs HTTP GET requests" do
-    VCR.use_cassette('performs HTTP GET requests') do
+    VCR.use_cassette('performs-http-get-requests') do
       query = @query.ask.where([:s, :p, :o]).to_s
       response = @conn.get(query)
-      response.should be_a_kind_of(Net::HTTPSuccess)
       response.body.should == 'true'
     end
   end
@@ -50,14 +50,14 @@ describe RDF::Virtuoso::Connection do
   end
 
   it "performs HTTP POST requests" do
-    VCR.use_cassette('performs HTTP POST requests') do
+    VCR.use_cassette('performs-http-post-requests') do
       query = @query.create(RDF::URI.new(@graph)).to_s
       response = @conn.post(query)
-      response.should be_a_kind_of(Net::HTTPSuccess)
-      #TODO: parse body to verify
+      response.body.should match(/done/)
+
       query = @query.drop(RDF::URI.new(@graph)).to_s
       response = @conn.post(query)
-      response.should be_a_kind_of(Net::HTTPSuccess)
+      response.body.should match(/done/)
     end
   end
 

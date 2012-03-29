@@ -1,5 +1,4 @@
 require_relative 'spec_helper'
-require 'sparql/client/query'
 
 describe RDF::Virtuoso::Connection do
   before(:each) do

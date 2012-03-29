@@ -4,6 +4,13 @@ module RDF::Virtuoso
 
   class Connection
 
+    # TODO: move this higher up the stack?
+    RESULT_BOOL = 'text/boolean'.freeze # Sesame-specific
+    RESULT_JSON = 'application/sparql-results+json'.freeze
+    RESULT_XML  = 'application/sparql-results+xml'.freeze
+    ACCEPT_JSON = {'Accept' => RESULT_JSON}.freeze
+    ACCEPT_XML  = {'Accept' => RESULT_XML}.freeze
+
     attr_reader :url
     attr_reader :options
     attr_reader :headers

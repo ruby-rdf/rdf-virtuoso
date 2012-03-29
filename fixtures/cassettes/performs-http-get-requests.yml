@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://reviewer:secret@localhost:8890/sparql-auth?query=ASK%20WHERE%20%7B%20?s%20?p%20?o%20.%20%7D
+    uri: http://localhost:8890/sparql?query=ASK%20WHERE%20%7B%20?s%20?p%20?o%20.%20%7D
     body:
       encoding: US-ASCII
       string: ''
@@ -25,7 +25,7 @@ http_interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Thu, 29 Mar 2012 13:14:23 GMT
+      - Thu, 29 Mar 2012 14:23:41 GMT
       Accept-Ranges:
       - bytes
       Content-Type:
@@ -36,5 +36,5 @@ http_interactions:
       encoding: US-ASCII
       string: 'true'
     http_version: 
-  recorded_at: Thu, 29 Mar 2012 13:14:23 GMT
+  recorded_at: Thu, 29 Mar 2012 14:23:41 GMT
 recorded_with: VCR 2.0.0

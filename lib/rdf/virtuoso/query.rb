@@ -161,13 +161,10 @@ module RDF::Virtuoso
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#select
     def insert(*patterns)
-      # @values = variables.map { |var| [var, RDF::Query::Variable.new(var)] }
       new_patterns = []
       patterns.each do |values|
-        # values.map {|p| puts p}
         new_patterns << values.map { |var| [var, var.is_a?(RDF::URI) ? var : var] }
       end
-      # ps = patterns.map { |var| [var, RDF::Query::Variable.new(var)] }
       @data_values = new_patterns #build_patterns(new_patterns)
       self
     end
@@ -175,10 +172,8 @@ module RDF::Virtuoso
     def delete_data(*patterns)
       new_patterns = []
       patterns.each do |values|
-        # values.map {|p| puts p}
         new_patterns << values.map { |var| [var, var.is_a?(RDF::URI) ? var : var] }
       end
-      # ps = patterns.map { |var| [var, RDF::Query::Variable.new(var)] }
       @data_values = new_patterns #build_patterns(new_patterns)
       self
     end
@@ -289,6 +284,15 @@ module RDF::Virtuoso
     # @see    http://www.w3.org/TR/rdf-sparql-query/#prefNames
     def prefix(string)
       (options[:prefixes] ||= []) << string
+      self
+    end
+
+    ##
+    # @return [Query]
+    # @see    http://www.w3.org/TR/rdf-sparql-query/#prefNames
+    def prefixes(array)
+      options[:prefixes] ||= []
+      options[:prefixes] += array
       self
     end
 

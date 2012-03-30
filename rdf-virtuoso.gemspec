@@ -24,5 +24,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "webmock"
 
   s.add_runtime_dependency "rdf", "~> 0.3.5"
+  s.add_runtime_dependency "net-http-persistent", "~> 2.6"
 
 end

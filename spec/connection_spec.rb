@@ -1,5 +1,4 @@
 require_relative 'spec_helper'
-require 'nokogiri'
 
 describe RDF::Virtuoso::Connection do
   before(:each) do

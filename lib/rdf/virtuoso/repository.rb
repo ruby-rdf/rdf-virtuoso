@@ -21,6 +21,12 @@ module RDF::Virtuoso
       @connection = Connection.new(@url, @options)
     end
 
+    def query(options={})
+      pattern = RDF::Query::Pattern.from(options)
+      q = select(:s).distinct.where([:s, options[:predicate], options[:object]]).to_s
+      puts super(q).inspect
+    end
+
     def supports?(feature)
       case feature.to_sym
       when :context then true

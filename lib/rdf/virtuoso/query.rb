@@ -290,9 +290,16 @@ module RDF::Virtuoso
     ##
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#prefNames
-    def prefixes(array)
+    def prefixes(hash_or_array)
       options[:prefixes] ||= []
-      options[:prefixes] += array
+      case hash_or_array
+      when Array
+        options[:prefixes] += hash_or_array
+      when Hash
+        hash_or_array.each_pair do |key, uri|
+          options[:prefixes] << "#{key}: <#{uri}>"
+        end
+      end
       self
     end
 

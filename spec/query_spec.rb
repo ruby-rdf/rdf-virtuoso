@@ -137,10 +137,16 @@ describe RDF::Virtuoso::Query do
         "PREFIX #{prefixes[0]} PREFIX #{prefixes[1]} SELECT * WHERE { ?s ?p ?o . }"
     end
 
-    it "should support PREFIXES" do
-      prefixes = ["dc: <http://purl.org/dc/elements/1.1/>", "foaf: <http://xmlns.com/foaf/0.1/>"]
+    it "construct PREFIXES from an array" do
+      prefixes = ["dc: <#{RDF::DC.to_s}>", "foaf: <#{RDF::FOAF.to_s}>"]
       @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
         "PREFIX #{prefixes[0]} PREFIX #{prefixes[1]} SELECT * WHERE { ?s ?p ?o . }"
+    end
+
+    it "constructs PREFIXES from a hash" do
+      prefixes = { "dc" => RDF::DC.to_s, "foaf" => RDF::FOAF.to_s }
+      @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
+        "PREFIX dc: <#{RDF::DC}> PREFIX foaf: <#{RDF::FOAF}> SELECT * WHERE { ?s ?p ?o . }"
     end
 
     it "should support OPTIONAL" do

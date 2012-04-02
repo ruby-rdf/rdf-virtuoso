@@ -137,14 +137,8 @@ describe RDF::Virtuoso::Query do
         "PREFIX #{prefixes[0]} PREFIX #{prefixes[1]} SELECT * WHERE { ?s ?p ?o . }"
     end
 
-    it "construct PREFIXES from an array" do
-      prefixes = ["dc: <#{RDF::DC.to_s}>", "foaf: <#{RDF::FOAF.to_s}>"]
-      @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
-        "PREFIX #{prefixes[0]} PREFIX #{prefixes[1]} SELECT * WHERE { ?s ?p ?o . }"
-    end
-
-    it "constructs PREFIXES from a hash" do
-      prefixes = { "dc" => RDF::DC.to_s, "foaf" => RDF::FOAF.to_s }
+    it "constructs PREFIXES" do
+      prefixes = RDF::Virtuoso::Prefixes.new dc: RDF::DC, foaf: RDF::FOAF
       @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
         "PREFIX dc: <#{RDF::DC}> PREFIX foaf: <#{RDF::FOAF}> SELECT * WHERE { ?s ?p ?o . }"
     end

@@ -1,4 +1,5 @@
 require_relative '../lib/rdf/virtuoso/prefixes'
+require 'rdf'
 
 describe RDF::Virtuoso::Prefixes do
   subject { RDF::Virtuoso::Prefixes.new(foo: 'bar', baz: 'quux') }
@@ -20,15 +21,23 @@ describe RDF::Virtuoso::Prefixes do
   end
 
   context "when creating prefixes" do
-    let(:uris) { %w[http://example.org/foo http://hash.org#bar] }
+    let(:uris) { [RDF::DC.title.to_s, "http://example.org/foo/bar", "http://hash.org/foo#bar"] }
 
     it "creates prefixes from uris" do
-      RDF::Virtuoso::Prefixes.parse(uris).should == ["example: <http://example.org/>", "hash: <http://hash.org#>"]
+      RDF::Virtuoso::Prefixes.parse(uris).should == [
+        "purl: <http://purl.org/dc/terms/>", 
+        "example: <http://example.org/foo/>", 
+        "hash: <http://hash.org/foo#>"
+      ]
     end
 
     it "only creates unique prefixes from uris" do
-      uris << 'http://example.org/bar'
-      RDF::Virtuoso::Prefixes.parse(uris).should == ["example: <http://example.org/>", "hash: <http://hash.org#>"]
+      uris << 'http://example.org/foo/baz'
+      RDF::Virtuoso::Prefixes.parse(uris).should == [
+        "purl: <http://purl.org/dc/terms/>", 
+        "example: <http://example.org/foo/>", 
+        "hash: <http://hash.org/foo#>"
+      ]
     end
 
     it "returns an error object if a disallowed param is sent" do

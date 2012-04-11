@@ -18,4 +18,22 @@ describe RDF::Virtuoso::Prefixes do
   it "presents itself nicely" do
     subject.to_s.should == "{:foo=>\"bar\", :baz=>\"quux\"}"
   end
+
+  context "when creating prefixes" do
+    let(:uris) { %w[http://example.org/foo http://hash.org#bar] }
+
+    it "creates prefixes from uris" do
+      RDF::Virtuoso::Prefixes.parse(uris).should == ["example: <http://example.org/>", "hash: <http://hash.org#>"]
+    end
+
+    it "only creates unique prefixes from uris" do
+      uris << 'http://example.org/bar'
+      RDF::Virtuoso::Prefixes.parse(uris).should == ["example: <http://example.org/>", "hash: <http://hash.org#>"]
+    end
+
+    it "returns an error object if a disallowed param is sent" do
+      RDF::Virtuoso::Prefixes.parse({}).should be_a RDF::Virtuoso::UnProcessable
+    end
+
+  end
 end

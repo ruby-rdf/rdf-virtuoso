@@ -21,12 +21,6 @@ module RDF::Virtuoso
       @connection = Connection.new(@url, @options)
     end
 
-    def query(options={})
-      pattern = RDF::Query::Pattern.from(options)
-      q = select(:s).distinct.where([:s, options[:predicate], options[:object]]).to_s
-      puts super(q).inspect
-    end
-
     def supports?(feature)
       case feature.to_sym
       when :context then true
@@ -37,6 +31,7 @@ module RDF::Virtuoso
     # @see RDF::Enumerable#each.
     def each(&block)
       if block_given?
+        debugger
         #TODO: produce an RDF::Statement, then:
         # block.call(RDF::Statement)
         #

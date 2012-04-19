@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://localhost:8890/sparql?query=ASK%20WHERE%20%7B%20?s%20?p%20?o%20.%20%7D
+    uri: http://localhost:8890/sparql?query=SELECT%20DISTINCT%20?s%20WHERE%20%7B%20?s%20?p%20?o%20.%20%7D%20LIMIT%201
     body:
       encoding: US-ASCII
       string: ''
@@ -31,10 +31,13 @@ http_interactions:
       Content-Type:
       - application/sparql-results+json; charset=UTF-8
       Content-Length:
-      - '43'
+      - '213'
     body:
       encoding: US-ASCII
-      string: ! '{  "head": { "link": [] }, "boolean": true}'
+      string: ! "\n{ \"head\": { \"link\": [], \"vars\": [\"s\"] },\n  \"results\":
+        { \"distinct\": false, \"ordered\": true, \"bindings\": [\n    { \"s\": {
+        \"type\": \"uri\", \"value\": \"http://www.openlinksw.com/virtrdf-data-formats#default-iid\"
+        }} ] } }"
     http_version: 
   recorded_at: Thu, 19 Apr 2012 15:53:18 GMT
 recorded_with: VCR 2.1.0

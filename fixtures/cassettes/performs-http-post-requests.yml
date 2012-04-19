@@ -23,11 +23,11 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - Virtuoso/06.01.3127 (Darwin) i386-apple-darwin11.3.0
+      - Virtuoso/06.01.3127 (Darwin) x86_64-apple-darwin11.3.0
       Connection:
       - Keep-Alive
       Date:
-      - Fri, 30 Mar 2012 11:31:25 GMT
+      - Thu, 19 Apr 2012 15:53:18 GMT
       Accept-Ranges:
       - bytes
       Content-Type:
@@ -43,7 +43,7 @@ http_interactions:
         graph &lt;http://example.org/&gt; -- done</literal></binding>\n  </result>\n
         </results>\n</sparql>"
     http_version: 
-  recorded_at: Fri, 30 Mar 2012 11:31:25 GMT
+  recorded_at: Thu, 19 Apr 2012 15:53:18 GMT
 - request:
     method: post
     uri: http://reviewer:secret@localhost:8890/sparql-auth
@@ -67,11 +67,11 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - Virtuoso/06.01.3127 (Darwin) i386-apple-darwin11.3.0
+      - Virtuoso/06.01.3127 (Darwin) x86_64-apple-darwin11.3.0
       Connection:
       - Keep-Alive
       Date:
-      - Fri, 30 Mar 2012 11:31:25 GMT
+      - Thu, 19 Apr 2012 15:53:18 GMT
       Accept-Ranges:
       - bytes
       Content-Type:
@@ -87,5 +87,5 @@ http_interactions:
         graph &lt;http://example.org/&gt; -- done</literal></binding>\n  </result>\n
         </results>\n</sparql>"
     http_version: 
-  recorded_at: Fri, 30 Mar 2012 11:31:25 GMT
-recorded_with: VCR 2.0.0
+  recorded_at: Thu, 19 Apr 2012 15:53:18 GMT
+recorded_with: VCR 2.1.0

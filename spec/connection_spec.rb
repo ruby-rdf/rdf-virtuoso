@@ -40,7 +40,15 @@ describe RDF::Virtuoso::Connection do
     VCR.use_cassette('performs-http-get-requests') do
       query = @query.ask.where([:s, :p, :o]).to_s
       response = @conn.get(query)
-      response.body.should == 'true'
+      response.body.should match(/true/)
+    end
+  end
+
+  it "returns JSON by default" do
+    VCR.use_cassette('returns-json-by-default') do
+      query = @query.select(:s).distinct.where([:s, :p, :o]).limit(1).to_s
+      response = @conn.get(query)
+      response.content_type.should == 'application/sparql-results+json'
     end
   end
 

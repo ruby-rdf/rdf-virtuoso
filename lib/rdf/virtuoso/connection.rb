@@ -6,7 +6,6 @@ module RDF::Virtuoso
   class Connection
 
     # TODO: move this higher up the stack?
-    RESULT_BOOL = 'text/boolean'.freeze # Sesame-specific
     RESULT_JSON = 'application/sparql-results+json'.freeze
     RESULT_XML  = 'application/sparql-results+xml'.freeze
     ACCEPT_JSON = {'Accept' => RESULT_JSON}.freeze
@@ -41,7 +40,15 @@ module RDF::Virtuoso
              end
       @url = RDF::URI.new(to_hash)
 
-      @headers   = options.delete(:headers) || {}
+      @headers =
+        {
+          'Accept' =>
+            [
+              RESULT_JSON, RESULT_XML,
+              RDF::Format.content_types.keys.map(&:to_s)
+            ].join(', ')
+        }.merge(options.delete(:headers) || {})
+
       @options   = options
       @connected = false
       @http = http_klass(@url.scheme)

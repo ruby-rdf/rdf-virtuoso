@@ -28,6 +28,13 @@ module RDF::Virtuoso
       end
     end
 
+    #def query(pattern)
+    #  debugger
+    #  pattern = Query::Pattern.from(pattern)
+    #  enum = RDF::Statement.from(pattern)
+    #  pattern
+    #end
+
     # @see RDF::Enumerable#each.
     def each(&block)
       if block_given?

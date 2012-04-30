@@ -16,9 +16,8 @@ module RDF::Virtuoso
           uri = URI(prefix)
           str = ""
           str << uri.host.split('.')[-2]
-          str << ': <'
           /^(?<iri>.*[\/|#]).+$/ =~ uri.to_s
-          str << iri << '>'
+          str << ": <%s>" % iri
           result << str
         end
         result.to_a

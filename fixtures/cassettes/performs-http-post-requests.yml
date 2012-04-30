@@ -27,7 +27,7 @@ http_interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Thu, 19 Apr 2012 15:53:18 GMT
+      - Mon, 30 Apr 2012 09:57:19 GMT
       Accept-Ranges:
       - bytes
       Content-Type:
@@ -43,7 +43,7 @@ http_interactions:
         graph &lt;http://example.org/&gt; -- done</literal></binding>\n  </result>\n
         </results>\n</sparql>"
     http_version: 
-  recorded_at: Thu, 19 Apr 2012 15:53:18 GMT
+  recorded_at: Mon, 30 Apr 2012 09:57:19 GMT
 - request:
     method: post
     uri: http://reviewer:secret@localhost:8890/sparql-auth
@@ -71,7 +71,7 @@ http_interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Thu, 19 Apr 2012 15:53:18 GMT
+      - Mon, 30 Apr 2012 09:57:19 GMT
       Accept-Ranges:
       - bytes
       Content-Type:
@@ -87,5 +87,5 @@ http_interactions:
         graph &lt;http://example.org/&gt; -- done</literal></binding>\n  </result>\n
         </results>\n</sparql>"
     http_version: 
-  recorded_at: Thu, 19 Apr 2012 15:53:18 GMT
-recorded_with: VCR 2.1.0
+  recorded_at: Mon, 30 Apr 2012 09:57:19 GMT
+recorded_with: VCR 2.0.1

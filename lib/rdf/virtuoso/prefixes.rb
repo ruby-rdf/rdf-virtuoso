@@ -4,6 +4,15 @@ module RDF::Virtuoso
   class UnProcessable; end
   class Prefixes
 
+    PREFIXES = {
+      dc:    'http://purl.org/dc/terms/',
+      bibo:  'http://purl.org/ontology/bibo/',
+      fabio: 'http://purl.org/spar/fabio/',
+      rev:   'http://purl.org/stuff/rev#',
+      foaf:  'http://xmlns.com/foaf/0.1/',
+      lang:  'http://lexvo.org/id/iso639-3/'
+    }
+
     class << self
       def parse(uri_or_array)
         prefixes = case uri_or_array

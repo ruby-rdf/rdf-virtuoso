@@ -36,18 +36,18 @@ module RDF::Virtuoso
     #end
 
     # @see RDF::Enumerable#each.
-    def each(&block)
-      if block_given?
-        debugger
-        #TODO: produce an RDF::Statement, then:
-        # block.call(RDF::Statement)
-        #
-        # @statements.each do |s| block.call(s) end
-        raise NotImplementedError
-      else
-        ::Enumerable::Enumerator.new(self,:each)
-      end
-    end
+    #def each(&block)
+    #  if block_given?
+    #    binding.pry
+    #    #TODO: produce an RDF::Statement, then:
+    #    # block.call(RDF::Statement)
+    #    #
+    #    # @statements.each do |s| block.call(s) end
+    #    raise NotImplementedError
+    #  else
+    #    ::Enumerable::Enumerator.new(self,:each)
+    #  end
+    #end
 
     # @see RDF::Mutable#insert_statement
     def insert_statement(statement)

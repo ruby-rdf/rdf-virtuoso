@@ -12,12 +12,13 @@ module RDF
           when response['boolean']
             response['boolean']
           when response['results']
-            response['results']['bindings'].map do |row|
+            solutions = response['results']['bindings'].map do |row|
               row = row.inject({}) do |cols, (name, value)|
                 cols.merge(name.to_sym => parse_json_value(value))
               end
               RDF::Query::Solution.new(row)
             end
+            RDF::Query::Solutions.new(solutions)
           end
         end
 

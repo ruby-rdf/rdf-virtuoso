@@ -200,7 +200,7 @@ module RDF::Virtuoso
     end
 
     ##
-    # Establishes the connection to the Sesame server.
+    # Establishes the connection to the Virtuoso server.
     #
     # @param  [Hash{Symbol => Object}] options
     # @yield  [connection]
@@ -225,7 +225,7 @@ module RDF::Virtuoso
     alias_method :open!, :open
 
     ##
-    # Closes the connection to the Sesame server.
+    # Closes the connection to the Virtuoso server.
     #
     # You do not generally need to call {#close} explicitly.
     #
@@ -278,7 +278,7 @@ module RDF::Virtuoso
     end
 
     ##
-    # Performs an HTTP POST request for the given Sesame `path`.
+    # Performs an HTTP POST request for the given Virtuoso `path`.
     #
     # @param  [String, #to_s]          path
     # @param  [String, #to_s]          data

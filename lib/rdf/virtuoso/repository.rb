@@ -74,7 +74,6 @@ module RDF::Virtuoso
 
     # Convert a query to SPARQL.
     def query_to_sparql(query)
-      debugger
       variables = []
       patterns = []
       query.patterns.each do |p|

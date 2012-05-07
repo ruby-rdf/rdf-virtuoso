@@ -15,6 +15,7 @@ module RDF
       class ClientError < StandardError; end
       class MalformedQuery < ClientError; end
       class NotAuthorized < ClientError; end
+      class ServerError < StandardError; end
 
       persistent
 
@@ -49,6 +50,8 @@ module RDF
           raise NotAuthorized.new
         when 400
           raise MalformedQuery.new(response.parsed_response)
+        when 500..599
+          raise ServerError.new(response.body)
         end
       end
 

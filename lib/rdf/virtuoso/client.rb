@@ -17,7 +17,8 @@ module RDF
       class NotAuthorized < ClientError; end
       class ServerError < StandardError; end
 
-      persistent
+      # TODO: Look at issues with HTTParty Connection reset
+      #persistent
 
       attr_reader :username, :password
 
@@ -81,7 +82,8 @@ module RDF
         self.class.endpoint 'sparql-auth'
         post '/', extra_query: { query: query }.merge(options), 
                   extra_request: { basic_auth: basic_auth },
-                  response_container: ["results", "bindings", 0, "callret-0", "value"]
+                  response_container: [
+                    "results", "bindings", 0, "callret-0", "value"]
       end
 
     end

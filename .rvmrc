@@ -1,1 +1,1 @@
-rvm use ruby-1.9.3-p125@rdf-virtuoso --create
+rvm use 1.9.3@rdf-virtuoso --create

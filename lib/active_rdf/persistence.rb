@@ -14,6 +14,11 @@ module ActiveRDF
 
     module ClassMethods
 
+      def connection
+        # TODO: make this behave like AM/AR Connection
+        CLIENT
+      end
+
       def graph
         url = RDF::URI.new("http://data.deichman.no")
         if defined?(Rails)

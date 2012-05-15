@@ -1,5 +1,6 @@
-require 'rdf/spec'
+#require 'rdf/spec'
 require 'rdf/virtuoso'
+require 'active_rdf'
 require 'vcr'
 
 VCR.configure do |c|
@@ -7,6 +8,8 @@ VCR.configure do |c|
   c.hook_into :webmock
 end
 
-RSpec.configure do |config|
-  config.include(RDF::Spec::Matchers)
-end
+Dir[File.expand_path('../../spec/support/**/*.rb', File.path(__FILE__))].each { |f| require f }
+
+#RSpec.configure do |config|
+#  config.include(RDF::Spec::Matchers)
+#end

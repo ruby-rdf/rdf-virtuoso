@@ -40,9 +40,11 @@ module ActiveRDF
       end
 
       def before_create(method)
+        # Placeholder until implemented in ActiveRDF::Callbacks
       end
 
       def before_save(method)
+        # Placeholder until implemented in ActiveRDF::Callbacks
       end
 
       # @see: http://rdf.rubyforge.org/RDF/Query/Solutions.html

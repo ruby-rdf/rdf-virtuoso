@@ -72,10 +72,12 @@ module ActiveRDF
         solutions.each do |solution|
           record = new
           solution.each_binding do |name, value|
-            record[name] = value.to_s.blank? ? nil : value.to_s
+            record[name] = value.to_s
           end
-          record.id = id_for(record.id)
-          record.changed_attributes.clear
+          if record.id.present?
+            record.id = id_for(record.id)
+            record.changed_attributes.clear
+          end
           results << record
         end
         results

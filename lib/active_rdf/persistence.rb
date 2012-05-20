@@ -98,18 +98,6 @@ module ActiveRDF
     end
 
     # Instance methods
-    def to_param
-      self.id.gsub((self.class.graph / '#').to_s, '')
-    end
-
-    def type
-      self.class.type
-    end
-
-    def graph
-      self.class.graph
-    end
-
     def save
       return false unless self.valid?
       create_or_update

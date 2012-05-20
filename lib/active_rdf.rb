@@ -9,4 +9,5 @@ module ActiveRDF
 
   autoload :Model
   autoload :Persistence
+  autoload :Reflection
 end

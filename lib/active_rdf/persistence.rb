@@ -19,14 +19,6 @@ module ActiveRDF
         CLIENT
       end
 
-      def graph
-        url = RDF::URI.new("http://data.deichman.no")
-        if defined?(Rails)
-          url = url.join Rails.env unless Rails.env.production?
-        end
-        url / self.name.downcase.pluralize
-      end
-
       def create(attrs = nil) 
         object = new(attrs)
         object.save

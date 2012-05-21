@@ -13,6 +13,14 @@ module ActiveRDF
     class << self
       attr_accessor :reflections
 
+      def graph
+        url = RDF::URI.new("http://data.deichman.no")
+        if defined?(Rails)
+          url = url.join Rails.env unless Rails.env.production?
+        end
+        url / self.name.downcase.pluralize
+      end
+
       private
 
       def inherited(child)

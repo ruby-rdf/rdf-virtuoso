@@ -143,11 +143,6 @@ module ActiveRDF
       !new_record?
     end
 
-    def subject
-      return nil unless self.id.present?
-      self.class.graph / self.id
-    end
-
     private
 
     def subject_for(id)

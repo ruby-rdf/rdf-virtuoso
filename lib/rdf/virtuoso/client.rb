@@ -20,14 +20,15 @@ module RDF
       # TODO: Look at issues with HTTParty Connection reset
       #persistent
 
-      attr_reader :username, :password
+      attr_reader :username, :password, :uri
 
       def initialize(uri, username = nil, password = nil)
         self.class.base_uri uri
+        @uri = uri
         @username = username
         @password = password
       end
-      
+
       READ_METHODS  = %w(select ask construct describe)
       WRITE_METHODS = %w(insert update delete create drop clear)
 

@@ -134,7 +134,7 @@ module ActiveRDF
       self.attributes = self.class.find(self.id).attributes
       self
     end
-    
+
     def new_record?
       self.id.nil?
     end

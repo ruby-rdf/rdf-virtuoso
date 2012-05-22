@@ -7,7 +7,10 @@ module ActiveRDF
       # Override ActiveAttr::Attributes.attribute=(name, value)
       def attribute=(name, value)
         @attributes ||= {}
-        send("#{name}_will_change!") unless @attributes[name] == value
+        # We'll assume that nil and "" are equivalent
+        unless (@attributes[name].blank? && value.blank?) || (@attributes[name] == value)
+          send("#{name}_will_change!")
+        end
         @attributes[name] = value
       end
     end
@@ -138,6 +141,11 @@ module ActiveRDF
 
     def persisted?
       !new_record?
+    end
+
+    def subject
+      return nil unless self.id.present?
+      self.class.graph / self.id
     end
 
     private

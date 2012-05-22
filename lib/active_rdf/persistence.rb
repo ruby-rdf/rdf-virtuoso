@@ -7,7 +7,10 @@ module ActiveRDF
       # Override ActiveAttr::Attributes.attribute=(name, value)
       def attribute=(name, value)
         @attributes ||= {}
-        send("#{name}_will_change!") unless @attributes[name] == value
+        # We'll assume that nil and "" are equivalent
+        unless (@attributes[name].blank? && value.blank?) || (@attributes[name] == value)
+          send("#{name}_will_change!")
+        end
         @attributes[name] = value
       end
     end
@@ -17,14 +20,6 @@ module ActiveRDF
       def connection
         # TODO: make this behave like AM/AR Connection
         CLIENT
-      end
-
-      def graph
-        url = RDF::URI.new("http://data.deichman.no")
-        if defined?(Rails)
-          url = url.join Rails.env unless Rails.env.production?
-        end
-        url / self.name.downcase.pluralize
       end
 
       def create(attrs = nil) 
@@ -98,18 +93,6 @@ module ActiveRDF
     end
 
     # Instance methods
-    def to_param
-      self.id.gsub((self.class.graph / '#').to_s, '')
-    end
-
-    def type
-      self.class.type
-    end
-
-    def graph
-      self.class.graph
-    end
-
     def save
       return false unless self.valid?
       create_or_update
@@ -158,6 +141,11 @@ module ActiveRDF
 
     def persisted?
       !new_record?
+    end
+
+    def subject
+      return nil unless self.id.present?
+      self.class.graph / self.id
     end
 
     private

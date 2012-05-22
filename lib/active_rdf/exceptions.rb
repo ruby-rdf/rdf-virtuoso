@@ -1,4 +1,5 @@
 module ActiveRDF
+
   class ConnectionError < StandardError # :nodoc:
     attr_reader :response
 

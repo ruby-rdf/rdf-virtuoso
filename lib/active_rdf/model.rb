@@ -21,20 +21,33 @@ module ActiveRDF
         url / self.name.downcase.pluralize
       end
 
+      def encode(string)
+        [string].pack('m')
+      end
+
+      def decode(string)
+        string.unpack('m')[0]
+      end      
+
+      def from_param(param)
+        decode param
+      end
+      
       private
 
       def inherited(child)
         child.instance_variable_set :@reflections, @reflections.dup
         super
       end      
-    end
+    end  # Class methods
 
     def type
       self.class.type
     end    
 
     def to_param
-      self.id.gsub((self.class.graph / '#').to_s, '')
+      #self.id.gsub((self.class.graph / '#').to_s, '')
+      self.class.encode self.subject
     end
 
     def graph

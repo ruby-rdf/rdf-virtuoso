@@ -136,7 +136,7 @@ module ActiveRDF
     end
 
     def reload
-      self.attributes = self.class.find(self.id).attributes
+      self.attributes = self.class.find(self).attributes
       self
     end
 

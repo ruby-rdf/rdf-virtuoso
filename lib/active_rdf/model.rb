@@ -41,11 +41,6 @@ module ActiveRDF
       self.class.graph
     end
 
-    def subject
-      return nil unless self.id.present?
-      graph / self.id
-    end
-
     extend Reflections
     
     @reflections = HashWithIndifferentAccess.new

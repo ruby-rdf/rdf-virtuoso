@@ -61,6 +61,10 @@ module ActiveRDF
         result.first['callret-0'].to_i
       end
 
+      def first
+        all(limit: 1).first
+      end
+
       def execute(sql)
         results = []
         solutions = CLIENT.select(sql)
@@ -69,8 +73,8 @@ module ActiveRDF
           solution.each_binding do |name, value|
             record[name] = value.to_s
           end
-          if record.id.present?
-            record.id = id_for(record.id)
+          if record.subject.present?
+            record.id = id_for(record.subject)
             record.changed_attributes.clear
           end
           results << record
@@ -79,11 +83,12 @@ module ActiveRDF
       end
 
       def subject_for(id)
-        "<" << (self.graph / "#" / id) << ">"
+        self.graph / "#" / id
       end
 
       def id_for(subject)
-        subject.to_s.gsub((self.graph / '#').to_s, '')
+        subject.split("#").last
+        #subject.to_s.gsub((self.graph / '#').to_s, '')
       end
 
       def destroy_all

@@ -10,6 +10,11 @@ module ActiveRDF
     include ActiveModel::Dirty
     include ActiveRDF::Persistence
 
+    # All children should have these attributes
+    attribute :id,          type: String
+    attribute :subject,     type: String  
+    
+
     class << self
       attr_accessor :reflections
 

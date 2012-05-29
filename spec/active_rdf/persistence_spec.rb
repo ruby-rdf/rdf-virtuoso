@@ -9,8 +9,8 @@ describe ActiveRDF::Persistence do
 
   before do
     resource.stub(:id).and_return("some_unique_id")
-    resource.stub(:connection).and_return Object.new
-    resource.stub(:subject).and_return "#{resource.graph}##{resource.id}"
+    client = double("client")
+    resource.stub(:connection).and_return client
   end
 
   describe :destroy do
@@ -19,8 +19,8 @@ describe ActiveRDF::Persistence do
       subject = resource.subject_for(resource.id)
       query = 
 <<-q
-DELETE FROM <#{resource.graph}> { <#{resource.subject}> ?p ?o } 
-WHERE { <#{resource.subject}> ?p ?o }
+DELETE FROM <#{resource.graph}> { <#{subject}> ?p ?o } 
+WHERE { <#{subject}> ?p ?o }
 q
 
       resource.connection.should_receive(:delete).with(query)

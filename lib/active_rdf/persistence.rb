@@ -98,6 +98,11 @@ module ActiveRDF
     end
 
     # Instance methods
+    
+    def connection
+      self.class.connection
+    end
+
     def save
       return false unless self.valid?
       create_or_update
@@ -111,12 +116,13 @@ module ActiveRDF
     end
 
     def destroy
-
       subject = subject_for(self.id)
-
-      query = "DELETE FROM <#{self.class.graph}> { #{subject} ?p ?o } WHERE { #{subject} ?p ?o }"
-
-      result = CLIENT.delete(query)
+      query = 
+<<-q 
+DELETE FROM <#{graph}> { <#{subject}> ?p ?o } 
+WHERE { <#{subject}> ?p ?o }
+q
+      result = connection.delete(query)
     end
 
 
@@ -148,11 +154,11 @@ module ActiveRDF
       !new_record?
     end
 
-    private
-
     def subject_for(id)
       self.class.subject_for(id)
     end
+
+    private
 
     def create_or_update
       result = new_record? ? create : update

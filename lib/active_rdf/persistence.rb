@@ -87,8 +87,7 @@ module ActiveRDF
       end
 
       def id_for(subject)
-        subject.split("#").last
-        #subject.to_s.gsub((self.graph / '#').to_s, '')
+        subject.to_s.split("#").last
       end
 
       def destroy_all

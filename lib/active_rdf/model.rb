@@ -21,7 +21,7 @@ module ActiveRDF
       def graph
         url = RDF::URI.new("http://data.deichman.no")
         if defined?(Rails)
-          url = url.join Rails.env unless Rails.env.production?
+          url = url.join Rails.env unless (Rails.env.production? || Rails.env.staging?)
         end
         url / self.name.downcase.pluralize
       end

@@ -61,6 +61,17 @@ module ActiveRDF
         result.first['callret-0'].to_i
       end
 
+      def find(object_or_id, conditions = {})
+
+        subject = case object_or_id
+                  when String then decode(object_or_id)
+                  when self then object_or_id.subject
+                  else raise ActiveModel::MissingAttributeError.new(object_or_id.inspect)
+                  end
+
+        find_by_subject(subject, conditions = {})
+      end      
+
       def first
         all(limit: 1).first
       end

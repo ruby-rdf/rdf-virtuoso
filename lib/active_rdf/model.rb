@@ -50,8 +50,9 @@ module ActiveRDF
       self.class.type
     end    
 
+    # When using an object's subject, which comes in the format http://example.org/object#123 as 
+    # a query param, we must encode it first
     def to_param
-      #self.id.gsub((self.class.graph / '#').to_s, '')
       self.class.encode self.subject
     end
 

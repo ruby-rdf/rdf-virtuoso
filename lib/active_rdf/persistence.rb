@@ -103,9 +103,10 @@ module ActiveRDF
       end
 
       def destroy_all
-        query = "CLEAR GRAPH <#{self.graph}>"
-        CLIENT.clear(query)
+        query = "DELETE FROM <#{self.graph}> { ?s ?p ?o } WHERE { ?s a <#{self.type}> . ?s ?p ?o }"
+        connection.delete(query)
       end
+
     end
 
     # Instance methods

@@ -27,7 +27,7 @@ module ActiveRDF
       end
 
       def encode(string)
-        [string].pack('m')
+        [string].pack('m0')
       end
 
       def decode(string)

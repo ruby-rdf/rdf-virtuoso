@@ -103,7 +103,7 @@ module ActiveRDF
       end
 
       def destroy_all
-        query = "DELETE FROM <#{self.graph}> { ?s ?p ?o } WHERE { ?s a <#{self.type}> . ?s ?p ?o }"
+        query = "DELETE FROM <#{self.graph}> { ?s ?p ?o } WHERE { GRAPH <#{self.graph}> { ?s a <#{self.type}> . ?s ?p ?o } }"
         connection.delete(query)
       end
 

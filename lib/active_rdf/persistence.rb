@@ -93,8 +93,9 @@ module ActiveRDF
         results
       end
 
+      # TODO: set baseurl via config
       def subject_for(id)
-        self.graph / "#" / id
+        RDF::URI('http://data.deichman.no') / self.name.downcase / "#" / id
       end
 
       def id_for(subject)

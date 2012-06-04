@@ -13,7 +13,7 @@ module ActiveRDF
     # All children should have these attributes
     attribute :id,          type: String
     attribute :subject,     type: String  
-    
+
 
     class << self
       attr_accessor :reflections
@@ -32,23 +32,23 @@ module ActiveRDF
 
       def decode(string)
         string.unpack('m')[0]
-      end      
+      end
 
       def from_param(param)
         decode param
       end
-      
+
       private
 
       def inherited(child)
         child.instance_variable_set :@reflections, @reflections.dup
         super
-      end      
+      end
     end  # Class methods
 
     def type
       self.class.type
-    end    
+    end
 
     # When using an object's subject, which comes in the format http://example.org/object#123 as 
     # a query param, we must encode it first
@@ -61,9 +61,9 @@ module ActiveRDF
     end
 
     extend Reflections
-    
+
     @reflections = HashWithIndifferentAccess.new
-    
+
   end
 
 end

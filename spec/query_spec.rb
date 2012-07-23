@@ -22,15 +22,19 @@ describe RDF::Virtuoso::Query do
       @query.should respond_to(:construct)
     end
 
-    it "should support INSERT queries" do
-      @query.should respond_to(:insert)
+    it "should support INSERT DATA queries" do
+      @query.should respond_to(:insert_data)
     end
 
+    it "should support INSERT WHERE queries" do
+      @query.should respond_to(:insert)
+    end
+    
     it "should support DELETE DATA queries" do
       @query.should respond_to(:delete_data)
     end
 
-    it "should support DELETE DATA queries" do
+    it "should support DELETE WHERE queries" do
       @query.should respond_to(:delete)
     end
 
@@ -47,18 +51,21 @@ describe RDF::Virtuoso::Query do
       @uri = RDF::Vocabulary.new "http://example.org/"
     end
     # TODO add support for advanced inserts (moving copying between different graphs)
-    it "should support inserts" do
-      @query.insert([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . } WHERE { ?s ?p ?o . }"
-      # @query.insert([uri.ola, uri.name, RDF::Literal.new('myname')]).graph(RDF::URI.new(uri)).where([:s, :p, :o]).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> <myname> . } WHERE { ?s ?p ?o . }"
-      @query.insert([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . } WHERE { ?s ?p ?o . }"
+    it "should support INSERT DATA queries" do
+      @query.insert_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . }"
+      @query.insert_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"
     end
 
-    it "should support delete data queries" do
+    it "should support INSERT WHERE" do
+      @query.insert(:s, :p, :o).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "INSERT INTO GRAPH <#{@graph}> { ?s ?p ?o } WHERE { ?s ?p ?o . }"
+    end
+
+    it "should support DELETE DATA queries" do
       @query.delete_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . }"  
       @query.delete_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"  
     end
 
-    it "should support delete queries" do
+    it "should support DELETE WHERE queries" do
       @query.delete(:s, :p, :o).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s ?p ?o } WHERE { ?s ?p ?o . }"
     end
 

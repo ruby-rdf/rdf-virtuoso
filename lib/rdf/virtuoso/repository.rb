@@ -15,18 +15,21 @@ module RDF::Virtuoso
     def initialize(url, options={}, &block)
       @options = options
       @url = case url
-      when RDF::URI then url
-      else RDF::URI.parse(url)
+        when RDF::URI then url
+        else RDF::URI.parse(url)
       end
       #TODO: implement a solid interface to Connection
       @connection = Connection.new(@url, @options)
       @client = Client.new(url, @options[:username], @options[:password])
     end
 
+    ##
+    # @private
+    # @see RDF::Repository#supports?
     def supports?(feature)
       case feature.to_sym
-      when :context then true
-      else super
+        when :context then true # statement contexts / named graphs
+        else super
       end
     end
 

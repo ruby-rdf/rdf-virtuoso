@@ -77,12 +77,17 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}]            options
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#construct
-    def self.insert(*patterns)
+    def self.insert_data(*patterns)
       # options = variables.last.is_a?(Hash) ? variables.pop : {}
       options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:insert, options).insert(*patterns) 
+      self.new(:insert_data, options).insert_data(*patterns) 
     end
 
+    def self.insert(*variables)
+      options = variables.last.is_a?(Hash) ? variables.pop : {}
+      #options = patterns.last.is_a?(Hash) ? patterns.pop : {}
+      self.new(:insert, options).insert(*variables) 
+    end
 
     def self.delete_data(*patterns)
       options = patterns.last.is_a?(Hash) ? patterns.pop : {}
@@ -91,7 +96,7 @@ module RDF::Virtuoso
 
     def self.delete(*variables)
       options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:delete, options).describe(*variables)      
+      self.new(:delete, options).delete(*variables)      
     end
 
     def self.create(*variables)
@@ -160,7 +165,7 @@ module RDF::Virtuoso
     # @param  [Array<Symbol>] variables
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#select
-    def insert(*patterns)
+    def insert_data(*patterns)
       new_patterns = []
       patterns.each do |values|
         new_patterns << values.map { |var| [var, var.is_a?(RDF::URI) ? var : var] }
@@ -169,6 +174,13 @@ module RDF::Virtuoso
       self
     end
 
+    def insert(*variables)
+      @values = variables.map { |var|
+        [var, var.is_a?(RDF::URI) ? var : RDF::Query::Variable.new(var)]
+      }
+      self
+    end
+    
     def delete_data(*patterns)
       new_patterns = []
       patterns.each do |values|
@@ -385,18 +397,22 @@ module RDF::Virtuoso
         buffer += serialize_patterns(options[:template])
         buffer << '}'
         
-        # for virtuoso insert
-      when :insert
-        buffer << 'DATA INTO'
-        buffer << "GRAPH #{serialize_value(options[:graph])}" if options[:graph]
+        # for virtuoso inserts
+      when :insert_data
+        buffer << "INTO GRAPH #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
-        # buffer += serialize_patterns(options[:template])
-        # (@data_values.map { |v| puts v[1].inspect; puts 'xxx ' } )
         @data_values .each do |triple|
           buffer << (triple.map { |v| serialize_value(v[1]) }.join(' ') + ' .')
         end
-        # buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
-        buffer << '}'
+        buffer << '}'          
+        
+      when :insert
+        buffer << "INTO GRAPH #{serialize_value(options[:graph])}" if options[:graph]
+        # buffer += serialize_patterns(options[:template])
+        # (@data_values.map { |v| puts v[1].inspect; puts 'xxx ' } )
+        buffer << '{'
+        buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
+        buffer << '}'          
         
       when :delete_data
         buffer << "FROM #{serialize_value(options[:graph])}" #if options[:graph]
@@ -425,7 +441,7 @@ module RDF::Virtuoso
 
       
 
-      unless patterns.empty? && ([:describe, :insert, :delete_data, :create, :clear, :drop].include?(form))
+      unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))
         buffer << 'WHERE {'
 
         buffer << '{' if options[:unions]

@@ -1,4 +1,5 @@
-#require 'rdf/spec'
+require 'rdf/spec'
+require 'rdf'
 require 'rdf/virtuoso'
 require 'active_rdf'
 require 'vcr'

@@ -83,10 +83,10 @@ module RDF::Virtuoso
       self.new(:insert_data, options).insert_data(*patterns) 
     end
 
-    def self.insert(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      #options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:insert, options).insert(*variables) 
+    def self.insert(*patterns)
+      # options = variables.last.is_a?(Hash) ? variables.pop : {}
+      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
+      self.new(:insert, options).insert(*patterns) 
     end
 
     def self.delete_data(*patterns)
@@ -174,10 +174,20 @@ module RDF::Virtuoso
       self
     end
 
-    def insert(*variables)
-      @values = variables.map { |var|
-        [var, var.is_a?(RDF::URI) ? var : RDF::Query::Variable.new(var)]
-      }
+    def insert(*patterns)
+      new_patterns = []
+      patterns.each do |pattern|
+        new_patterns << pattern.map do |value|
+          if value.is_a?(Symbol)
+            value = RDF::Query::Variable.new(value)
+          elsif value.is_a?(RDF::URI) 
+            value = value
+          else
+            value = RDF::Literal.new(value)
+          end
+        end
+      end
+      @data_values = build_patterns(new_patterns)
       self
     end
     
@@ -401,7 +411,7 @@ module RDF::Virtuoso
       when :insert_data
         buffer << "INTO GRAPH #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
-        @data_values .each do |triple|
+        @data_values.each do |triple|
           buffer << (triple.map { |v| serialize_value(v[1]) }.join(' ') + ' .')
         end
         buffer << '}'          
@@ -411,13 +421,13 @@ module RDF::Virtuoso
         # buffer += serialize_patterns(options[:template])
         # (@data_values.map { |v| puts v[1].inspect; puts 'xxx ' } )
         buffer << '{'
-        buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
+        buffer += serialize_patterns(@data_values)
         buffer << '}'          
         
       when :delete_data
         buffer << "FROM #{serialize_value(options[:graph])}" #if options[:graph]
         buffer << '{'
-        @data_values .each do |triple|
+        @data_values.each do |triple|
           buffer << (triple.map { |v| serialize_value(v[1]) }.join(' ') + ' .')
         end
         buffer << '}'          

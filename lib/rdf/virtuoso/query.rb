@@ -94,10 +94,15 @@ module RDF::Virtuoso
       self.new(:delete_data, options).delete_data(*patterns)
     end
 
-    def self.delete(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:delete, options).delete(*variables)      
+    def self.delete(*patterns)
+      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
+      self.new(:delete, options).delete(*patterns) 
     end
+    
+#    def self.delete(*variables)
+#      options = variables.last.is_a?(Hash) ? variables.pop : {}
+#      self.new(:delete, options).delete(*variables)      
+#    end
 
     def self.create(*variables)
       options = variables.last.is_a?(Hash) ? variables.pop : {}
@@ -200,12 +205,29 @@ module RDF::Virtuoso
       self
     end
 
-    def delete(*variables)
-      @values = variables.map { |var|
-        [var, var.is_a?(RDF::URI) ? var : RDF::Query::Variable.new(var)]
-      }
+    def delete(*patterns)
+      new_patterns = []
+      patterns.each do |pattern|
+        new_patterns << pattern.map do |value|
+          if value.is_a?(Symbol)
+            value = RDF::Query::Variable.new(value)
+          elsif value.is_a?(RDF::URI) 
+            value = value
+          else
+            value = RDF::Literal.new(value)
+          end
+        end
+      end
+      @data_values = build_patterns(new_patterns)
       self
     end
+    
+#    def delete(*variables)
+#      @values = variables.map { |var|
+#        [var, var.is_a?(RDF::URI) ? var : RDF::Query::Variable.new(var)]
+#      }
+#      self
+#    end
 
     def create(uri)
       options[:graph] = uri
@@ -441,10 +463,10 @@ module RDF::Virtuoso
         buffer << '}'          
 
       when :delete
-        buffer << "FROM #{serialize_value(options[:graph])}"
+        buffer << "FROM #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
-        buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
-        buffer << '}'          
+        buffer += serialize_patterns(@data_values)
+        buffer << '}'           
 
       when :create, :drop
         buffer << 'SILENT' if options[:silent]

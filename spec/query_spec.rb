@@ -56,7 +56,7 @@ describe RDF::Virtuoso::Query do
       @query.insert_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"
     end
 
-    it "should support INSERT WHERE with symbols and patterns" do
+    it "should support INSERT WHERE queries with symbols and patterns" do
       @query.insert([:s, :p, :o]).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "INSERT INTO GRAPH <#{@graph}> { ?s ?p ?o . } WHERE { ?s ?p ?o . }"
       @query.insert([:s, @uri.newtype, :o]).graph(RDF::URI.new(@graph)).where([:s, @uri.type, :o]).to_s.should == "INSERT INTO GRAPH <#{@graph}> { ?s <#{@graph}newtype> ?o . } WHERE { ?s <#{@graph}type> ?o . }"
     end
@@ -66,8 +66,9 @@ describe RDF::Virtuoso::Query do
       @query.delete_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"  
     end
 
-    it "should support DELETE WHERE queries" do
-      @query.delete(:s, :p, :o).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s ?p ?o } WHERE { ?s ?p ?o . }"
+    it "should support DELETE WHERE queries with symbols and patterns" do
+      @query.delete([:s, :p, :o]).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s ?p ?o . } WHERE { ?s ?p ?o . }"
+      @query.delete([:s, @uri.newtype, :o]).graph(RDF::URI.new(@graph)).where([:s, @uri.newtype, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s <#{@graph}newtype> ?o . } WHERE { ?s <#{@graph}newtype> ?o . }"
     end
 
     it "should support CREATE GRAPH queries" do

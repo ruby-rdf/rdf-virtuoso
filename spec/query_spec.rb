@@ -161,6 +161,16 @@ describe RDF::Virtuoso::Query do
         "SELECT * WHERE { ?s ?p ?o . OPTIONAL { ?s <#{RDF.type}> ?o . } OPTIONAL { ?s <#{RDF::DC.abstract}> ?o . } }"
     end
 
+    it "should support MINUS" do
+      @query.select.where([:s, :p, :o]).minus([:s, RDF.type, :o], [:s, RDF::DC.abstract, :o]).to_s.should ==
+        "SELECT * WHERE { ?s ?p ?o . MINUS { ?s <#{RDF.type}> ?o . ?s <#{RDF::DC.abstract}> ?o . } }"
+    end
+
+    it "should support multiple MINUSes" do
+      @query.select.where([:s, :p, :o]).minus([:s, RDF.type, :o]).minus([:s, RDF::DC.abstract, :o]).to_s.should ==
+        "SELECT * WHERE { ?s ?p ?o . MINUS { ?s <#{RDF.type}> ?o . } MINUS { ?s <#{RDF::DC.abstract}> ?o . } }"
+    end
+    
     it "should support UNION" do
       @query.select.where([:s, RDF::DC.abstract, :o]).union([:s, RDF.type, :o]).to_s.should ==
       "SELECT * WHERE { { ?s <#{RDF::DC.abstract}> ?o . } UNION { ?s <#{RDF.type}> ?o . } }"

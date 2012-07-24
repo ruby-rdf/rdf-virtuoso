@@ -326,6 +326,14 @@ module RDF::Virtuoso
       self
     end
 
+    ##
+    # @return [Query]
+    # @see    http://www.w3.org/TR/rdf-sparql-query/#minus
+    def minus(*patterns)
+      (options[:minuses] ||= []) << build_patterns(patterns)
+      self
+    end
+    
     def union(*patterns)
       (options[:unions] ||= []) << build_patterns(patterns)
       self
@@ -465,6 +473,15 @@ module RDF::Virtuoso
             buffer << '}'
           end
         end
+
+        if options[:minuses]
+          options[:minuses].each do |patterns|
+            buffer << 'MINUS {'
+            buffer += serialize_patterns(patterns)
+            buffer << '}'
+          end
+        end
+                
         if options[:filters]
           buffer += options[:filters].map { |filter| "FILTER(#{filter})" }
         end

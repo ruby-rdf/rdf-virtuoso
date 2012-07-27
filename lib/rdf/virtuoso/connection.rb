@@ -292,7 +292,7 @@ module RDF::Virtuoso
 
       request = Net::HTTP::Post.new(url.request_uri)
       request.set_form_data(query: query.to_s)
-      request.basic_auth url.user, url.password if url.user && !url.user.empty?
+      #request.basic_auth url.user, url.password if url.user && !url.user.empty?
       response = @http.request url, request
 
       if block_given?

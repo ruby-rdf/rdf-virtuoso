@@ -20,13 +20,14 @@ module RDF
       # TODO: Look at issues with HTTParty Connection reset
       #persistent
 
-      attr_reader :username, :password, :uri
+      attr_reader :username, :password, :uri, :auth_method
 
-      def initialize(uri, username = nil, password = nil)
+      def initialize(uri, opts={})
         self.class.base_uri uri
         @uri = uri
-        @username = username
-        @password = password
+        @username        = opts[:username]    || nil 
+        @password        = opts[:password]    || nil
+        @auth_method     = opts[:auth_method] || 'basic'
       end
 
       READ_METHODS  = %w(select ask construct describe)
@@ -69,10 +70,19 @@ module RDF
         { headers: headers }
       end
 
-      def basic_auth
+      def extra_request_options
+        case @auth_method
+        when 'basic'
+          { basic_auth: auth }
+        when 'digest'
+          { digest_auth: auth }
+        end
+      end
+      
+      def auth
         { username: @username, password: @password }
       end
-
+      
       def api_get(query, options = {})
         self.class.endpoint 'sparql'
         get '/', extra_query: { query: query }.merge(options), 
@@ -82,7 +92,7 @@ module RDF
       def api_post(query, options = {})
         self.class.endpoint 'sparql-auth'
         post '/', extra_query: { query: query }.merge(options), 
-                  extra_request: { basic_auth: basic_auth },
+                  extra_request: extra_request_options,
                   response_container: [
                     "results", "bindings", 0, "callret-0", "value"]
       end

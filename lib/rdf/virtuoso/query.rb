@@ -160,14 +160,27 @@ module RDF::Virtuoso
     ##
     # @param  [Array<RDF::Query::Pattern, Array>] patterns
     # @return [Query]
+    # @see    http://www.w3.org/TR/rdf-sparql-query/#construct
     def construct(*patterns)
-      options[:template] = build_patterns(patterns)
+      new_patterns = []
+      patterns.each do |pattern|
+        new_patterns << pattern.map do |value|
+          if value.is_a?(Symbol)
+            value = RDF::Query::Variable.new(value)
+          elsif value.is_a?(RDF::URI) 
+            value = value
+          else
+            value = RDF::Literal.new(value)
+          end
+        end
+      end
+      @data_values = build_patterns(new_patterns)
       self
     end
 
 
     ##
-    # @param  [Array<Symbol>] variables
+    # @param  [Array<RDF::Query::Pattern, Array>] patterns
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#select
     def insert_data(*patterns)
@@ -379,6 +392,12 @@ module RDF::Virtuoso
       self
     end
 
+    def filters(filters = nil)
+      options[:filters] ||= []
+      options[:filters] += filters.to_a
+      self
+    end
+    
     ##
     # @return [Boolean]
     def true?
@@ -434,7 +453,7 @@ module RDF::Virtuoso
         buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
       when :construct
         buffer << '{'
-        buffer += serialize_patterns(options[:template])
+        buffer += serialize_patterns(@data_values)
         buffer << '}'
         
         # for virtuoso inserts
@@ -479,13 +498,10 @@ module RDF::Virtuoso
 
       buffer << "FROM #{serialize_value(options[:from])}" if options[:from]
 
-      
-
       unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))
         buffer << 'WHERE {'
 
         buffer << '{' if options[:unions]
-
 
         buffer += serialize_patterns(patterns)
         if options[:optionals]
@@ -517,7 +533,6 @@ module RDF::Virtuoso
           end
           buffer << '}'
         end
-
 
       end
 

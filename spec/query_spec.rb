@@ -96,6 +96,11 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).to_s.should == "SELECT * WHERE { ?s ?p ?o . }"
     end
 
+    #it "should support raw string SPARQL queries" do
+    #  q = "SELECT * WHERE { ?s ?p ?o . }"
+    #  @query.select(q).to_s.should == "SELECT * WHERE { ?s ?p ?o . }"
+    #end
+    
     it "should support projection" do
       @query.select(:s).where([:s, :p, :o]).to_s.should == "SELECT ?s WHERE { ?s ?p ?o . }"
       @query.select(:s, :p).where([:s, :p, :o]).to_s.should == "SELECT ?s ?p WHERE { ?s ?p ?o . }"
@@ -146,12 +151,18 @@ describe RDF::Virtuoso::Query do
         "PREFIX #{prefixes[0]} PREFIX #{prefixes[1]} SELECT * WHERE { ?s ?p ?o . }"
     end
 
-    it "constructs PREFIXES" do
+    it "constructs PREFIXes" do
       prefixes = RDF::Virtuoso::Prefixes.new dc: RDF::DC, foaf: RDF::FOAF
       @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
         "PREFIX dc: <#{RDF::DC}> PREFIX foaf: <#{RDF::FOAF}> SELECT * WHERE { ?s ?p ?o . }"
     end
 
+    it "should support custom PREFIXes in hash array" do
+      prefixes = RDF::Virtuoso::Prefixes.new foo: "http://foo.com/", bar: "http://bar.net"
+      @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
+        "PREFIX foo: <http://foo.com/> PREFIX bar: <http://bar.net> SELECT * WHERE { ?s ?p ?o . }"
+    end
+    
     it "should support OPTIONAL" do
       @query.select.where([:s, :p, :o]).optional([:s, RDF.type, :o], [:s, RDF::DC.abstract, :o]).to_s.should ==
         "SELECT * WHERE { ?s ?p ?o . OPTIONAL { ?s <#{RDF.type}> ?o . ?s <#{RDF::DC.abstract}> ?o . } }"
@@ -177,7 +188,17 @@ describe RDF::Virtuoso::Query do
       "SELECT * WHERE { { ?s <#{RDF::DC.abstract}> ?o . } UNION { ?s <#{RDF.type}> ?o . } }"
     end
 
+    it "should support FILTER" do
+      @query.select.where([:s, RDF::DC.abstract, :o]).filter('lang(?text) != "nb"').to_s.should ==
+      "SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . FILTER(lang(?text) != \"nb\") }"
+    end
 
+    it "should support multiple FILTERs" do
+      filters = ['lang(?text) != "nb"', 'regex(?uri, "^https")']
+      @query.select.where([:s, RDF::DC.abstract, :o]).filters(filters).to_s.should ==
+      "SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . FILTER(lang(?text) != \"nb\") FILTER(regex(?uri, \"^https\")) }"
+    end
+    
   end
 
   context "when building DESCRIBE queries" do
@@ -202,5 +223,11 @@ describe RDF::Virtuoso::Query do
     it "should support basic graph patterns" do
       @query.construct([:s, :p, :o]).where([:s, :p, :o]).to_s.should == "CONSTRUCT { ?s ?p ?o . } WHERE { ?s ?p ?o . }"
     end
+
+    it "should support complex constructs" do
+      @query.construct([:s, :p, :o], [:s, :q, RDF::Literal.new("new")]).where([:s, :p, :o], [:s, :q, "old"]).to_s.should == "CONSTRUCT { ?s ?p ?o . ?s ?q \"new\" . } WHERE { ?s ?p ?o . ?s ?q \"old\" . }"
+    end    
+          
+
   end
 end

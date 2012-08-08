@@ -31,7 +31,7 @@ module RDF
       end
 
       READ_METHODS  = %w(select ask construct describe)
-      WRITE_METHODS = %w(insert update delete create drop clear)
+      WRITE_METHODS = %w(insert insert_data update delete delete_data create drop clear)
 
       READ_METHODS.each do |m|
         define_method m do |*args|

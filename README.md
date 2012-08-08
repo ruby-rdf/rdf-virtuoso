@@ -16,19 +16,19 @@ This example assumes you have a local installation of Virtoso running at standar
 
 #### Setup Client connection
 
-```uri = "http://localhost:8890"
-CLIENT = RDF::Virtuoso::Client.new(uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')```
+    uri = "http://localhost:8890"
+    CLIENT = RDF::Virtuoso::Client.new(uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
 
 :auth_method can be 'digest' or 'basic'
 
-#### Insert query example
+#### INSERT WHERE query example
 
-```QUERY = RDF::Virtuoso::Query
-graph = RDF::URI.new("http://test.com")
-subject = RDF::URI.new("http://subject")
+    QUERY = RDF::Virtuoso::Query
+    graph = RDF::URI.new("http://test.com")
+    subject = RDF::URI.new("http://subject")
 
-query = QUERY.insert([subject, :p, "object"]).graph(graph).where([subject, :p, :o])
-result = CLIENT.insert(query)```
+    query = QUERY.insert([subject, :p, "object"]).graph(graph).where([subject, :p, :o])
+    result = CLIENT.insert(query)
 
 ## Rails specifics
 Working on a prototype Rails application for negotiating and manipulating linked data in an RDF store, I discovered the lack of a reasonably current library to bridge the gap between the fairly well-established, modular RDF.rb library and a Rails 3 application. I wanted to be able to manipulate RDF data in a convenient, ActiveRecord/ActiveModel way. It turned out to be fairly non-trivial to mimic true AR/AM behavior and this is more or less the groundwork and result of my experimentation. I now have a much better idea of how to proceed, I just need the time to really go deep into this.

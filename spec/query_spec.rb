@@ -53,7 +53,7 @@ describe RDF::Virtuoso::Query do
     # TODO add support for advanced inserts (moving copying between different graphs)
     it "should support INSERT DATA queries" do
       @query.insert_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . }"
-      @query.insert_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"
+      @query.insert_data([@uri.ola, @uri.name, "two words"]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"two words\" . }"
     end
 
     it "should support INSERT WHERE queries with symbols and patterns" do
@@ -96,16 +96,28 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).to_s.should == "SELECT * WHERE { ?s ?p ?o . }"
     end
 
-    #it "should support raw string SPARQL queries" do
-    #  q = "SELECT * WHERE { ?s ?p ?o . }"
-    #  @query.select(q).to_s.should == "SELECT * WHERE { ?s ?p ?o . }"
-    #end
-    
     it "should support projection" do
       @query.select(:s).where([:s, :p, :o]).to_s.should == "SELECT ?s WHERE { ?s ?p ?o . }"
       @query.select(:s, :p).where([:s, :p, :o]).to_s.should == "SELECT ?s ?p WHERE { ?s ?p ?o . }"
       @query.select(:s, :p, :o).where([:s, :p, :o]).to_s.should == "SELECT ?s ?p ?o WHERE { ?s ?p ?o . }"
     end
+
+    it "should support SELECT with complex WHERE patterns" do
+      @query.select.where(
+      [:s, :p, :o], 
+      [:s, RDF.type, RDF::DC.Document]
+      ).to_s.should == 
+        "SELECT * WHERE { ?s ?p ?o . ?s <#{RDF.type}> <#{RDF::DC.Document}> . }"
+    end
+    
+    it "should support string objects in SPARQL queries" do
+      @query.select.where([:s, :p, "dummyobject"]).to_s.should == "SELECT * WHERE { ?s ?p \"dummyobject\" . }"
+    end
+
+    #it "should support raw string SPARQL queries" do
+    #  q = "SELECT * WHERE { ?s <#{RDF.type}> ?o . }"
+    #  @query.query_execute(q).should == "SELECT * WHERE { ?s <#{RDF.type}> ?o . }"
+    #end
 
     it "should support FROM" do
       uri = "http://example.org/dft.ttl"
@@ -123,6 +135,20 @@ describe RDF::Virtuoso::Query do
       @query.select(:s).reduced.where([:s, :p, :o]).to_s.should == "SELECT REDUCED ?s WHERE { ?s ?p ?o . }"
     end
 
+    it "should support aggregate COUNT" do
+      @query.select.where([:s, :p, :o]).count(:s).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
+    end
+
+    it "should support aggregates SUM, MIN, MAX, AVG, SAMPLE" do
+      @query.select.where([:s, :p, :o]).sum(:s).to_s.should == "SELECT (SUM (?s) AS ?sum) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).min(:s).to_s.should == "SELECT (MIN (?s) AS ?min) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).max(:s).to_s.should == "SELECT (MAX (?s) AS ?max) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).avg(:s).to_s.should == "SELECT (AVG (?s) AS ?avg) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).sample(:s).to_s.should == "SELECT (sql:SAMPLE (?s) AS ?sample) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).group_concat(:s, '_').to_s.should == "SELECT (sql:GROUP_CONCAT (?s, '_' ) AS ?group_concat) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', '1000', '1' ) AS ?group_digest) WHERE { ?s ?p ?o . }"
+    end
+    
     it "should support ORDER BY" do
       @query.select.where([:s, :p, :o]).order_by(:o).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"
       @query.select.where([:s, :p, :o]).order_by('?o').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"
@@ -173,7 +199,7 @@ describe RDF::Virtuoso::Query do
         "SELECT * WHERE { ?s ?p ?o . OPTIONAL { ?s <#{RDF.type}> ?o . } OPTIONAL { ?s <#{RDF::DC.abstract}> ?o . } }"
     end
 
-    it "should support MINUS" do
+    it "should support MINUS, also with an array pattern" do
       @query.select.where([:s, :p, :o]).minus([:s, RDF.type, :o], [:s, RDF::DC.abstract, :o]).to_s.should ==
         "SELECT * WHERE { ?s ?p ?o . MINUS { ?s <#{RDF.type}> ?o . ?s <#{RDF::DC.abstract}> ?o . } }"
     end

@@ -76,7 +76,7 @@ module RDF::Virtuoso
     # @param  [Array<RDF::Query::Pattern, Array>] patterns
     # @param  [Hash{Symbol => Object}]            options
     # @return [Query]
-    # @see    http://www.w3.org/TR/rdf-sparql-query/#construct
+    # @see    http://www.w3.org/Submission/SPARQL-Update/
     def self.insert_data(*patterns)
       # options = variables.last.is_a?(Hash) ? variables.pop : {}
       options = patterns.last.is_a?(Hash) ? patterns.pop : {}
@@ -182,7 +182,7 @@ module RDF::Virtuoso
     ##
     # @param  [Array<RDF::Query::Pattern, Array>] patterns
     # @return [Query]
-    # @see    http://www.w3.org/TR/rdf-sparql-query/#select
+    # @see    http://www.w3.org/Submission/SPARQL-Update/
     def insert_data(*patterns)
       new_patterns = []
       patterns.each do |values|
@@ -309,7 +309,23 @@ module RDF::Virtuoso
       options[:reduced] = state
       self
     end
-
+    
+    ## SPARQL 1.1 Aggregates
+    # @return [Query]
+    # @see    http://www.w3.org/TR/sparql11-query/#defn_aggCount
+   # def count(*variables)
+   #   options[:count] = variables
+   #   self
+   # end
+    AGG_METHODS  = %w(count min max sum avg sample group_concat group_digest)
+    
+    AGG_METHODS.each do |m|
+      define_method m do |*variables|
+        options[m.to_sym] = variables
+        self
+      end
+    end
+          
     ##
     # @param  [Integer, #to_i] start
     # @return [Query]
@@ -450,7 +466,28 @@ module RDF::Virtuoso
       when :select, :describe
         buffer << 'DISTINCT' if options[:distinct]
         buffer << 'REDUCED'  if options[:reduced]
-        buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
+        # Aggregates in select/describe
+        aggregates = [:count, :min, :max, :avg, :sum, :sample, :group_concat, :group_digest]
+        if (options.keys & aggregates).any?
+          (options.keys & aggregates).each do |agg|
+            case agg
+            when :sample
+              buffer << '(sql:' + agg.to_s.upcase
+              buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
+            when :group_concat, :group_digest
+              buffer << '(sql:' + agg.to_s.upcase
+              buffer << options[agg].map { |var| var.is_a?(Symbol) ? "(?#{var}" : "'#{var}'"}.join(', ')
+              buffer << ')'
+            else  
+              buffer << '(' + agg.to_s.gsub('_', ' ').upcase
+              buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
+            end
+            
+            buffer << 'AS ?' + agg.to_s + ')'
+          end
+        else
+          buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
+        end
       when :construct
         buffer << '{'
         buffer += serialize_patterns(@data_values)
@@ -583,8 +620,9 @@ module RDF::Virtuoso
       # SPARQL queries are UTF-8, but support ASCII-style Unicode escapes, so
       # the N-Triples serializer is fine unless it's a variable:
       case
-      when value.variable? then value.to_s
-      else RDF::NTriples.serialize(value)
+        when value.is_a?(String) then value.inspect
+        when value.variable? then value.to_s
+        else RDF::NTriples.serialize(value)
       end
     end
   end

@@ -1,9 +1,6 @@
 # rdf-virtuoso: Ruby Virtuoso adapter for RDF.rb
 The intent of this class is to act as an abstraction for clients wishing to connect and manipulate linked data stored in a Virtuoso Quad store.
 
-## Why?
-
-
 ## How?
 RDF::Virtuoso::Client is the main connection class built on top of APISmith to establish the read and write methods to a Virtuoso store SPARQL endpoint.
 RDF::Virtuoso::Query extends RDF::Query and adds SPARQL 1.1. update methods (insert, delete, etc.).

@@ -498,7 +498,7 @@ module RDF::Virtuoso
         buffer << "INTO GRAPH #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
         @data_values.each do |triple|
-          buffer << (triple.map { |v| serialize_value(v[1]) }.join(' ') + ' .')
+          buffer << triple.map { |v| serialize_value(v[1]) }.join(' ')
         end
         buffer << '}'          
         
@@ -514,7 +514,7 @@ module RDF::Virtuoso
         buffer << "FROM #{serialize_value(options[:graph])}" #if options[:graph]
         buffer << '{'
         @data_values.each do |triple|
-          buffer << (triple.map { |v| serialize_value(v[1]) }.join(' ') + ' .')
+          buffer << triple.map { |v| serialize_value(v[1]) }.join(' ')
         end
         buffer << '}'          
 

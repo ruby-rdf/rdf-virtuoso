@@ -1,5 +1,5 @@
 require 'api_smith'
-
+  
 module RDF
   module Virtuoso
     class Client
@@ -19,29 +19,30 @@ module RDF
 
       # TODO: Look at issues with HTTParty Connection reset
       #persistent
+      maintain_method_across_redirects true
 
       attr_reader :username, :password, :uri, :auth_method
 
       def initialize(uri, opts={})
         self.class.base_uri uri
         @uri = uri
-        @username        = opts[:username]    || nil 
-        @password        = opts[:password]    || nil
-        @auth_method     = opts[:auth_method] || 'basic'
+        @username        = opts[:username]    ||= nil 
+        @password        = opts[:password]    ||= nil
+        @auth_method     = opts[:auth_method] ||= 'digest'
       end
 
       READ_METHODS  = %w(select ask construct describe)
-      WRITE_METHODS = %w(insert insert_data update delete delete_data create drop clear)
+      WRITE_METHODS = %w(query insert insert_data update delete delete_data create drop clear)
 
       READ_METHODS.each do |m|
         define_method m do |*args|
-          api_get *args
+          response = api_get *args
         end
       end
 
       WRITE_METHODS.each do |m|
         define_method m do |*args|
-          api_post *args
+          response = api_post *args
         end
       end
 
@@ -63,37 +64,37 @@ module RDF
       end
 
       def base_query_options
-        { format: 'json' }
+        { :format => 'json' }
       end
 
       def base_request_options
-        { headers: headers }
+        { :headers => headers }
       end
 
       def extra_request_options
         case @auth_method
         when 'basic'
-          { basic_auth: auth }
+          { :basic_auth => auth }
         when 'digest'
-          { digest_auth: auth }
+          { :digest_auth => auth }
         end
       end
       
       def auth
-        { username: @username, password: @password }
+        { :username => @username, :password => @password }
       end
       
       def api_get(query, options = {})
         self.class.endpoint 'sparql'
-        get '/', extra_query: { query: query }.merge(options), 
-          transform: RDF::Virtuoso::Parser::JSON
+        get '/', :extra_query => { :query => query }.merge(options), 
+                 :transform => RDF::Virtuoso::Parser::JSON
       end
 
       def api_post(query, options = {})
         self.class.endpoint 'sparql-auth'
-        post '/', extra_query: { query: query }.merge(options), 
-                  extra_request: extra_request_options,
-                  response_container: [
+        post '/', :extra_body => { :query => query }.merge(options), 
+                  :extra_request => extra_request_options,
+                  :response_container => [
                     "results", "bindings", 0, "callret-0", "value"]
       end
 

@@ -52,10 +52,14 @@ describe RDF::Virtuoso::Query do
     end
     # TODO add support for advanced inserts (moving copying between different graphs)
     it "should support INSERT DATA queries" do
-      @query.insert_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> }"
-      @query.insert_data([@uri.ola, @uri.name, "two words"]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"two words\" }"
+      @query.insert_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . }"
+      @query.insert_data([@uri.ola, @uri.name, "two words"]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"two words\" . }"
     end
 
+    it "should support INSERT DATA queries with arrays" do
+      @query.insert_data([@uri.ola, @uri.type, @uri.something],[@uri.ola, @uri.type, @uri.something_else]).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . <#{@graph}ola> <#{@graph}type> <#{@graph}something_else> . }"
+    end
+    
     it "should support INSERT DATA queries with RDF::Statements" do
       statements = [RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type')), RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type2'))]
       @query.insert_data(statements).graph(RDF::URI.new(@graph)).to_s.should == "INSERT DATA INTO GRAPH <#{@graph}> { <http://test> <#{RDF.type}> <http://type> .\n <http://test> <#{RDF.type}> <http://type2> .\n }"
@@ -67,10 +71,14 @@ describe RDF::Virtuoso::Query do
     end
 
     it "should support DELETE DATA queries" do
-      @query.delete_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> }"  
-      @query.delete_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" }"  
+      @query.delete_data([@uri.ola, @uri.type, @uri.something]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . }"  
+      @query.delete_data([@uri.ola, @uri.name, RDF::Literal.new("myname")]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}name> \"myname\" . }"  
     end
 
+    it "should support DELETE DATA queries with arrays" do
+      @query.delete_data([@uri.ola, @uri.type, @uri.something],[@uri.ola, @uri.type, @uri.something_else]).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <#{@graph}ola> <#{@graph}type> <#{@graph}something> . <#{@graph}ola> <#{@graph}type> <#{@graph}something_else> . }"
+    end
+    
     it "should support DELETE DATA queries with RDF::Statements" do
       statements = [RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type')), RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type2'))]
       @query.delete_data(statements).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <http://test> <#{RDF.type}> <http://type> .\n <http://test> <#{RDF.type}> <http://type2> .\n }"
@@ -126,7 +134,7 @@ describe RDF::Virtuoso::Query do
 
     #it "should support raw string SPARQL queries" do
     #  q = "SELECT * WHERE { ?s <#{RDF.type}> ?o . }"
-    #  @query.query_execute(q).should == "SELECT * WHERE { ?s <#{RDF.type}> ?o . }"
+    #  @query.query(q).should == "SELECT * WHERE { ?s <#{RDF.type}> ?o . }"
     #end
 
     it "should support FROM" do

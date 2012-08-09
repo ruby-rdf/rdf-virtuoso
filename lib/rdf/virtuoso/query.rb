@@ -453,7 +453,8 @@ module RDF::Virtuoso
     ##
     # @return [Object]
     def execute
-      raise NotImplementedError
+      #query
+      #raise NotImplementedError
     end
 
     ##
@@ -498,7 +499,11 @@ module RDF::Virtuoso
         buffer << "INTO GRAPH #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
         @data_values.each do |triple|
-          buffer << triple.map { |v| serialize_value(v[1]) }.join(' ')
+          if triple.first.first.is_a?(RDF::Statement)
+            buffer << triple.map { |v| serialize_value(v[1])}
+          else
+            buffer << triple.map { |v| serialize_value(v[1])}.join(' ') + " ."
+          end
         end
         buffer << '}'          
         
@@ -514,7 +519,11 @@ module RDF::Virtuoso
         buffer << "FROM #{serialize_value(options[:graph])}" #if options[:graph]
         buffer << '{'
         @data_values.each do |triple|
-          buffer << triple.map { |v| serialize_value(v[1]) }.join(' ')
+          if triple.first.first.is_a?(RDF::Statement)
+            buffer << triple.map { |v| serialize_value(v[1])}
+          else
+            buffer << triple.map { |v| serialize_value(v[1])}.join(' ') + " ."
+          end
         end
         buffer << '}'          
 
@@ -589,7 +598,7 @@ module RDF::Virtuoso
     # @private
     def serialize_patterns(patterns)
       patterns.map do |p|
-        p.to_triple.map { |v| serialize_value(v) }.join(' ') + " ."
+        p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
       end
     end
 

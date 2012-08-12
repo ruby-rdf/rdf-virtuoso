@@ -1,9 +1,6 @@
 module RDF
   module Virtuoso
-#    autoload :Connection,  'rdf/virtuoso/connection'
-    autoload :Client,      'rdf/virtuoso/client'
-#    autoload :Repository,  'rdf/virtuoso/repository'
-#    autoload :Server,      'rdf/virtuoso/server'
+    autoload :Repository,  'rdf/virtuoso/repository'
     autoload :Query,       'rdf/virtuoso/query'
     autoload :Prefixes,    'rdf/virtuoso/prefixes'
     autoload :Parser,      'rdf/virtuoso/parser'

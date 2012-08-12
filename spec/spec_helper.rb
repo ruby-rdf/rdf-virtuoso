@@ -10,7 +10,3 @@ VCR.configure do |c|
 end
 
 Dir[File.expand_path('../../spec/support/**/*.rb', File.path(__FILE__))].each { |f| require f }
-
-#RSpec.configure do |config|
-#  config.include(RDF::Spec::Matchers)
-#end

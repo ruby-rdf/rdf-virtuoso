@@ -1,4 +1,3 @@
-
 module RDF::Virtuoso
 
   ##
@@ -99,11 +98,6 @@ module RDF::Virtuoso
       self.new(:delete, options).delete(*patterns) 
     end
     
-#    def self.delete(*variables)
-#      options = variables.last.is_a?(Hash) ? variables.pop : {}
-#      self.new(:delete, options).delete(*variables)      
-#    end
-
     def self.create(*variables)
       options = variables.last.is_a?(Hash) ? variables.pop : {}
       self.new(:create, options).create(variables.first)

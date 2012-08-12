@@ -2,8 +2,8 @@
 The intent of this class is to act as an abstraction for clients wishing to connect and manipulate linked data stored in a Virtuoso Quad store.
 
 ## How?
-RDF::Virtuoso::Client is the main connection class built on top of APISmith to establish the read and write methods to a Virtuoso store SPARQL endpoint.
-RDF::Virtuoso::Query extends RDF::Query and adds SPARQL 1.1. update methods (insert, delete, etc.).
+RDF::Virtuoso::Repository builds on RDF.rb and is the main connection class built on top of APISmith to establish the read and write methods to a Virtuoso store SPARQL endpoint.
+RDF::Virtuoso::Query extends RDF::Query and adds SPARQL 1.1. update methods (insert, delete, aggregates, etc.).
 
 For examples on use, see ./spec/client_spec.rb and ./spec/query_spec.rb 
 
@@ -11,12 +11,12 @@ For examples on use, see ./spec/client_spec.rb and ./spec/query_spec.rb
 
 This example assumes you have a local installation of Virtoso running at standard port 8890
 
-#### Setup Client connection
+#### Setup Repository connection connection with auth
 
     uri = "http://localhost:8890"
-    CLIENT = RDF::Virtuoso::Client.new(uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
+    REPO = RDF::Virtuoso::Repository.new(uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
 
-:auth_method can be 'digest' or 'basic'
+:auth_method can be 'digest' or 'basic'. a repository connection without auth requires only uri
 
 #### INSERT WHERE query example
 
@@ -25,8 +25,16 @@ This example assumes you have a local installation of Virtoso running at standar
     subject = RDF::URI.new("http://subject")
 
     query = QUERY.insert([subject, :p, "object"]).graph(graph).where([subject, :p, :o])
-    result = CLIENT.insert(query)
+    result = REPO.insert(query)
 
+#### A count query example
+
+    QUERY = RDF::Virtuoso::Query
+    graph = RDF::URI.new("http://test.com")
+    type =  RDF::BIBO.Document
+
+    count = REPO.select.where(:s, type, :o).count(:s).graph(graph)
+    
 ## Rails specifics
 Working on a prototype Rails application for negotiating and manipulating linked data in an RDF store, I discovered the lack of a reasonably current library to bridge the gap between the fairly well-established, modular RDF.rb library and a Rails 3 application. I wanted to be able to manipulate RDF data in a convenient, ActiveRecord/ActiveModel way. It turned out to be fairly non-trivial to mimic true AR/AM behavior and this is more or less the groundwork and result of my experimentation. I now have a much better idea of how to proceed, I just need the time to really go deep into this.
 An example prototype that exercises this library can be found here: https://github.com/digibib/booky
@@ -57,9 +65,6 @@ In no particular order:
 ## Notes
 The following classes are not yet in use or will probably disapper:
 
-* RDF::Virtuoso::Repository
-* RDF::Virtuoso::Server
-* RDF::Virtuoso::Connection
 * ActiveRDF::AssociationReflection
 * ActiveRDF::Exceptions
 * ActiveRDF::Reflections

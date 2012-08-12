@@ -155,6 +155,7 @@ describe RDF::Virtuoso::Query do
 
     it "should support aggregate COUNT" do
       @query.select.where([:s, :p, :o]).count(:s).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
+      @query.select.count(:s).where([:s, :p, :o]).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
     end
 
     it "should support aggregates SUM, MIN, MAX, AVG, SAMPLE" do

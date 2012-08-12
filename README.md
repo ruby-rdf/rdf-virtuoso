@@ -5,7 +5,10 @@ The intent of this class is to act as an abstraction for clients wishing to conn
 RDF::Virtuoso::Repository builds on RDF.rb and is the main connection class built on top of APISmith to establish the read and write methods to a Virtuoso store SPARQL endpoint.
 RDF::Virtuoso::Query extends RDF::Query and adds SPARQL 1.1. update methods (insert, delete, aggregates, etc.).
 
-For examples on use, see ./spec/client_spec.rb and ./spec/query_spec.rb 
+For examples on use, please read:
+     ./spec/client_spec.rb 
+and 
+     ./spec/query_spec.rb 
 
 ### A simple example
 
@@ -29,12 +32,31 @@ This example assumes you have a local installation of Virtoso running at standar
 
 #### A count query example
 
-    QUERY = RDF::Virtuoso::Query
-    graph = RDF::URI.new("http://test.com")
-    type =  RDF::BIBO.Document
+New prefixes can either extend the RDF::Vocabulary class (best if you want to model yourself:
 
-    count = REPO.select.where(:s, type, :o).count(:s).graph(graph)
+    module RDF
+      class FOO < RDF::Vocabulary("http://purl.org/ontology/foo/");end
+    end
+
+it can then be easily accessed by RDF::FOO, eg. 
+
+    RDF::FOO.Document
+
+or you can use the RDF::Virtuoso::Prefixes class in a query:
+
+    prefixes = RDF::Virtuoso::Prefixes.new foo: "http://purl.org/ontology/foo/", bar: "http://bar.net"
+
+    QUERY  = RDF::Virtuoso::Query
+    graph  = RDF::URI.new("http://test.com")
+    type   =  RDF::FOO.Document
+
+    query  = QUERY.select.where([:s, type, :o]).count(:s).prefixes(prefixes).graph(graph)
+    result = REPO.select(query)
     
+Results will be an array of RDF::Query::Solution that can be accessed by bindings or iterated
+
+    count = result.first[:count].to_i
+
 ## Rails specifics
 Working on a prototype Rails application for negotiating and manipulating linked data in an RDF store, I discovered the lack of a reasonably current library to bridge the gap between the fairly well-established, modular RDF.rb library and a Rails 3 application. I wanted to be able to manipulate RDF data in a convenient, ActiveRecord/ActiveModel way. It turned out to be fairly non-trivial to mimic true AR/AM behavior and this is more or less the groundwork and result of my experimentation. I now have a much better idea of how to proceed, I just need the time to really go deep into this.
 An example prototype that exercises this library can be found here: https://github.com/digibib/booky

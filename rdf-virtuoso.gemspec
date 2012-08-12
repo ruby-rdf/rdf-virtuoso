@@ -9,12 +9,13 @@ Gem::Specification.new do |s|
   s.authors     = ['Benjamin Rokseth', 'Peter Kordel']
   s.email       = ['benjamin.rokseth@kul.oslo.kommune.no']
   s.homepage    = 'https://github.com/digibib/rdf-virtuoso'
-  s.summary     = %q{A library for interacting with a Virtuoso rdf store}
-  s.description = %q{A library for interacting with a Virtuoso rdf store, also with ActiveRDF Rails connector}
+  s.summary     = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store}
+  s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store, also with ActiveRDF Rails connector}
 
   s.rubyforge_project = 'rdf-virtuoso'
 
   s.files         = %w(README.md) + Dir.glob('lib/**/*.rb')
+  s.files        += Dir['spec/**/*.rb'] + Dir['doc/**/**/*.rb']
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec', '~> 2.8.0'

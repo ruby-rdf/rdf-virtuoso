@@ -16,8 +16,9 @@ This example assumes you have a local installation of Virtoso running at standar
 
 #### Setup Repository connection connection with auth
 
-    uri = "http://localhost:8890"
-    REPO = RDF::Virtuoso::Repository.new(uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
+    uri        = "http://localhost:8890/sparql"
+    update_uri = "http://localhost:8890/sparql-auth"
+    repo       = RDF::Virtuoso::Repository.new(uri, :update_uri => update_uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
 
 :auth_method can be 'digest' or 'basic'. a repository connection without auth requires only uri
 
@@ -28,7 +29,7 @@ This example assumes you have a local installation of Virtoso running at standar
     subject = RDF::URI.new("http://subject")
 
     query = QUERY.insert([subject, :p, "object"]).graph(graph).where([subject, :p, :o])
-    result = REPO.insert(query)
+    result = repo.insert(query)
 
 #### A count query example
 
@@ -51,7 +52,7 @@ or you can use the RDF::Virtuoso::Prefixes class in a query:
     type   =  RDF::FOO.Document
 
     query  = QUERY.select.where([:s, type, :o]).count(:s).prefixes(prefixes).graph(graph)
-    result = REPO.select(query)
+    result = repo.select(query)
     
 Results will be an array of RDF::Query::Solution that can be accessed by bindings or iterated
 

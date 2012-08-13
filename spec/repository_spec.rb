@@ -9,8 +9,6 @@ describe RDF::Virtuoso do
   context "when connecting to a Virtuoso server" do
     it "should support connecting to a Virtuoso SPARQL endpoint" do
       repo = RDF::Virtuoso::Repository.new(@uri)
-            p repo
-
       repo.instance_variable_get("@sparul_endpoint").should == "/sparql"
     end
 

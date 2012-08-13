@@ -1,5 +1,6 @@
 require 'api_smith'
 require 'rdf'
+require 'uri'
 
 module RDF
   module Virtuoso
@@ -22,14 +23,20 @@ module RDF
       #persistent
       maintain_method_across_redirects true
 
-      attr_reader :username, :password, :uri, :auth_method
+      attr_reader :uri, :update_uri, :username, :password, :auth_method
 
       def initialize(uri, opts={})
-        self.class.base_uri uri
-        @uri = uri
-        @username        = opts[:username]    ||= nil 
-        @password        = opts[:password]    ||= nil
-        @auth_method     = opts[:auth_method] ||= 'digest'
+        @uri             = URI.parse(uri)
+        @update_uri      = URI.parse(opts[:update_uri]) if opts[:update_uri]
+        @base_uri        = "#{@uri.scheme}://#{@uri.host}"
+        @base_uri       += ":" + @uri.port.to_s if @uri.port
+        @username        = opts[:username]    || nil 
+        @password        = opts[:password]    || nil
+        @auth_method     = opts[:auth_method] || 'digest'
+
+        @sparql_endpoint = @uri.request_uri
+        @sparul_endpoint = @update_uri.nil? ? @sparql_endpoint : @update_uri.request_uri
+        self.class.base_uri @base_uri
       end
 
       READ_METHODS  = %w(select ask construct describe)
@@ -86,13 +93,13 @@ module RDF
       end
       
       def api_get(query, options = {})
-        self.class.endpoint 'sparql'
+        self.class.endpoint @sparql_endpoint
         get '/', :extra_query => { :query => query }.merge(options), 
                  :transform => RDF::Virtuoso::Parser::JSON
       end
 
       def api_post(query, options = {})
-        self.class.endpoint 'sparql-auth'
+        self.class.endpoint @sparul_endpoint
         post '/', :extra_body => { :query => query }.merge(options), 
                   :extra_request => extra_request_options,
                   :response_container => [

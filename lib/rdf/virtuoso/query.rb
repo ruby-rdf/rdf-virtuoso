@@ -83,7 +83,6 @@ module RDF::Virtuoso
     end
 
     def self.insert(*patterns)
-      # options = variables.last.is_a?(Hash) ? variables.pop : {}
       options = patterns.last.is_a?(Hash) ? patterns.pop : {}
       self.new(:insert, options).insert(*patterns) 
     end
@@ -385,7 +384,10 @@ module RDF::Virtuoso
     end
 
     ##
-    # @private
+    # @private 
+    # make RDF::Query::Pattern from triple array if not already done
+    # include :context in Statement
+    # @return [RDF::Query::Pattern]
     def build_patterns(patterns)
       patterns.map do |pattern|
         case pattern
@@ -540,10 +542,21 @@ module RDF::Virtuoso
 
       unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))
         buffer << 'WHERE {'
-
+        
         buffer << '{' if options[:unions]
-
-        buffer += serialize_patterns(patterns)
+        
+        # iterate patterns
+        # does patterns have :context hash? build with GRAPH statement
+        if patterns.any? { |p| p.has_context? }
+          patterns.each do | pattern|
+            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+            buffer << serialize_patterns(pattern)
+            buffer << '}'
+          end
+        else
+          buffer += serialize_patterns(patterns)
+        end
+         
         if options[:optionals]
           options[:optionals].each do |patterns|
             buffer << 'OPTIONAL {'
@@ -591,8 +604,12 @@ module RDF::Virtuoso
     ##
     # @private
     def serialize_patterns(patterns)
-      patterns.map do |p|
-        p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+      if patterns.is_a?(RDF::Query::Pattern)
+        patterns.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+      else
+        patterns.map do |p|
+          p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+        end
       end
     end
 
@@ -624,7 +641,7 @@ module RDF::Virtuoso
       # the N-Triples serializer is fine unless it's a variable:
       case
         when value.is_a?(String) then value.inspect
-        when value.variable? then value.to_s
+        when value.is_a?(RDF::Query::Variable) then value.to_s
         else RDF::NTriples.serialize(value)
       end
     end

@@ -127,7 +127,14 @@ describe RDF::Virtuoso::Query do
       ).to_s.should == 
         "SELECT * WHERE { ?s ?p ?o . ?s <#{RDF.type}> <#{RDF::DC.Document}> . }"
     end
-    
+
+    it "should support SELECT WHERE patterns from different GRAPH contexts" do
+      @graph1 = "http://example1.org/"
+      @graph2 = "http://example2.org/"
+      @query.select.where([:s, :p, :o, :context => @graph1],[:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should == 
+        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.Document}> . } }"
+    end
+        
     it "should support string objects in SPARQL queries" do
       @query.select.where([:s, :p, "dummyobject"]).to_s.should == "SELECT * WHERE { ?s ?p \"dummyobject\" . }"
     end
@@ -158,7 +165,7 @@ describe RDF::Virtuoso::Query do
       @query.select.count(:s).where([:s, :p, :o]).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
     end
 
-    it "should support aggregates SUM, MIN, MAX, AVG, SAMPLE" do
+    it "should support aggregates SUM, MIN, MAX, AVG, SAMPLE, GROUP_CONCAT, GROUP_DIGEST" do
       @query.select.where([:s, :p, :o]).sum(:s).to_s.should == "SELECT (SUM (?s) AS ?sum) WHERE { ?s ?p ?o . }"
       @query.select.where([:s, :p, :o]).min(:s).to_s.should == "SELECT (MIN (?s) AS ?min) WHERE { ?s ?p ?o . }"
       @query.select.where([:s, :p, :o]).max(:s).to_s.should == "SELECT (MAX (?s) AS ?max) WHERE { ?s ?p ?o . }"

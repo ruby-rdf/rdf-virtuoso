@@ -17,12 +17,12 @@ describe ActiveRDF::Persistence do
 
     it "formats the destroy query correctly" do
       subject = resource.subject_for(resource.id)
-      query = 
-<<-q
-DELETE FROM <#{resource.graph}> { <#{subject}> ?p ?o } 
-WHERE { <#{subject}> ?p ?o }
-q
-
+#      query = 
+#<<-q
+#DELETE FROM <#{resource.graph}> { <#{subject}> ?p ?o } 
+#WHERE { <#{subject}> ?p ?o }
+#q
+      query = RDF::Virtuoso::Query.delete([subject, :p, :o]).graph(resource.graph).where([subject, :p, :o])
       resource.connection.should_receive(:delete).with(query)
       resource.destroy
     end

@@ -16,13 +16,13 @@ module ActiveRDF
     end
 
     module ClassMethods
-
       def connection
         # TODO: make this behave like AM/AR Connection
-        CLIENT
+        #CLIENT
+        REPOSITORY
       end
 
-      def create(attrs = nil) 
+      def create(attrs = nil)
         object = new(attrs)
         object.save
         object
@@ -56,9 +56,10 @@ module ActiveRDF
       end
 
       def count
-        query = "SELECT COUNT(DISTINCT ?s) WHERE { GRAPH <#{self.graph}> { ?s a <#{self.type}> }}"
-        result = CLIENT.select(query)
-        result.first['callret-0'].to_i
+        #query = "SELECT COUNT(DISTINCT ?s) WHERE { GRAPH <#{self.graph}> { ?s a <#{self.type}> }}"
+        query = RDF::Virtuoso::Query.select(:s).count(:s).distinct.where([:s, RDF.type, self.type ])
+        result = connection.select(query)
+        result.first[:count].to_i
       end
 
       def find(object_or_id, conditions = {})
@@ -78,7 +79,7 @@ module ActiveRDF
 
       def execute(sql)
         results = []
-        solutions = CLIENT.select(sql)
+        solutions = connection.select(sql)
         solutions.each do |solution|
           record = new
           solution.each_binding do |name, value|
@@ -103,7 +104,8 @@ module ActiveRDF
       end
 
       def destroy_all
-        query = "DELETE FROM <#{self.graph}> { ?s ?p ?o } WHERE { GRAPH <#{self.graph}> { ?s a <#{self.type}> . ?s ?p ?o } }"
+        #query = "DELETE FROM <#{self.graph}> { ?s ?p ?o } WHERE { GRAPH <#{self.graph}> { ?s a <#{self.type}> . ?s ?p ?o } }"
+        query = RDF::Virtuoso::Query.delete([:s, :p, :o]).graph(self.graph).where([:s, RDF.type, self.type],[:s, :p, :o])
         connection.delete(query)
       end
 
@@ -129,11 +131,8 @@ module ActiveRDF
 
     def destroy
       subject = subject_for(self.id)
-      query = 
-<<-q 
-DELETE FROM <#{graph}> { <#{subject}> ?p ?o } 
-WHERE { <#{subject}> ?p ?o }
-q
+      #p subject
+      query = RDF::Virtuoso::Query.delete([subject, :p, :o]).graph(graph).where([subject, :p, :o])
       result = connection.delete(query)
     end
 

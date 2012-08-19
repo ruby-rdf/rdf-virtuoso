@@ -174,6 +174,10 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).group_concat(:s, '_').to_s.should == "SELECT (sql:GROUP_CONCAT (?s, '_' ) AS ?group_concat) WHERE { ?s ?p ?o . }"
       @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', '1000', '1' ) AS ?group_digest) WHERE { ?s ?p ?o . }"
     end
+
+    it "should support aggregates in addition to SELECT variables" do
+      @query.select(:s).where([:s, :p, :o]).group_digest(:o, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?o, '_', '1000', '1' ) AS ?group_digest) ?s WHERE { ?s ?p ?o . }"
+    end
     
     it "should support ORDER BY" do
       @query.select.where([:s, :p, :o]).order_by(:o).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"

@@ -561,7 +561,17 @@ module RDF::Virtuoso
         if options[:optionals]
           options[:optionals].each do |patterns|
             buffer << 'OPTIONAL {'
-            buffer += serialize_patterns(patterns)
+            
+	        if patterns.any? { |p| p.has_context? }
+	          patterns.each do | pattern|
+	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+	            buffer << serialize_patterns(pattern)
+	            buffer << '}'
+	          end
+	        else
+	          buffer += serialize_patterns(patterns)
+	        end
+            
             buffer << '}'
           end
         end
@@ -569,7 +579,17 @@ module RDF::Virtuoso
         if options[:minuses]
           options[:minuses].each do |patterns|
             buffer << 'MINUS {'
-            buffer += serialize_patterns(patterns)
+
+	        if patterns.any? { |p| p.has_context? }
+	          patterns.each do | pattern|
+	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+	            buffer << serialize_patterns(pattern)
+	            buffer << '}'
+	          end
+	        else
+	          buffer += serialize_patterns(patterns)
+	        end
+
             buffer << '}'
           end
         end

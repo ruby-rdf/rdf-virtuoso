@@ -236,6 +236,13 @@ describe RDF::Virtuoso::Query do
         "SELECT * WHERE { ?s ?p ?o . OPTIONAL { ?s <#{RDF.type}> ?o . ?s <#{RDF::DC.abstract}> ?o . } }"
     end
 
+    it "should support OPTIONAL with GRAPH contexts" do
+      @graph1 = "http://example1.org/"
+      @graph2 = "http://example2.org/"
+      @query.select.where([:s, :p, :o, :context => @graph1]).optional([:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should == 
+        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } OPTIONAL { GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.Document}> . } } }"
+    end
+    
     it "should support multiple OPTIONALs" do
       @query.select.where([:s, :p, :o]).optional([:s, RDF.type, :o]).optional([:s, RDF::DC.abstract, :o]).to_s.should ==
         "SELECT * WHERE { ?s ?p ?o . OPTIONAL { ?s <#{RDF.type}> ?o . } OPTIONAL { ?s <#{RDF::DC.abstract}> ?o . } }"
@@ -250,7 +257,13 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).minus([:s, RDF.type, :o]).minus([:s, RDF::DC.abstract, :o]).to_s.should ==
         "SELECT * WHERE { ?s ?p ?o . MINUS { ?s <#{RDF.type}> ?o . } MINUS { ?s <#{RDF::DC.abstract}> ?o . } }"
     end
-    
+
+    it "should support MINUS with a GRAPH context" do
+      @graph1 = "http://example1.org/"
+      @query.select.where([:s, :p, :o]).minus([:s, RDF.type, :o, :context => @graph1]).to_s.should ==
+        "SELECT * WHERE { ?s ?p ?o . MINUS { GRAPH <#{@graph1}> { ?s <#{RDF.type}> ?o . } } }"
+    end
+        
     it "should support UNION" do
       @query.select.where([:s, RDF::DC.abstract, :o]).union([:s, RDF.type, :o]).to_s.should ==
       "SELECT * WHERE { { ?s <#{RDF::DC.abstract}> ?o . } UNION { ?s <#{RDF.type}> ?o . } }"

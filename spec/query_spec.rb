@@ -173,22 +173,22 @@ describe RDF::Virtuoso::Query do
     end
 
     it "should support aggregate COUNT" do
-      @query.select.where([:s, :p, :o]).count(:s).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
-      @query.select.count(:s).where([:s, :p, :o]).to_s.should == "SELECT (COUNT (?s) AS ?count) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).count(:s).to_s.should == "SELECT (COUNT (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.count(:s).where([:s, :p, :o]).to_s.should == "SELECT (COUNT (?s) AS ?s) WHERE { ?s ?p ?o . }"
     end
 
     it "should support aggregates SUM, MIN, MAX, AVG, SAMPLE, GROUP_CONCAT, GROUP_DIGEST" do
-      @query.select.where([:s, :p, :o]).sum(:s).to_s.should == "SELECT (SUM (?s) AS ?sum) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).min(:s).to_s.should == "SELECT (MIN (?s) AS ?min) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).max(:s).to_s.should == "SELECT (MAX (?s) AS ?max) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).avg(:s).to_s.should == "SELECT (AVG (?s) AS ?avg) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).sample(:s).to_s.should == "SELECT (sql:SAMPLE (?s) AS ?sample) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).group_concat(:s, '_').to_s.should == "SELECT (sql:GROUP_CONCAT (?s, '_' ) AS ?group_concat) WHERE { ?s ?p ?o . }"
-      @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', 1000, 1 ) AS ?group_digest) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).sum(:s).to_s.should == "SELECT (SUM (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).min(:s).to_s.should == "SELECT (MIN (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).max(:s).to_s.should == "SELECT (MAX (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).avg(:s).to_s.should == "SELECT (AVG (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).sample(:s).to_s.should == "SELECT (sql:SAMPLE (?s) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).group_concat(:s, '_').to_s.should == "SELECT (sql:GROUP_CONCAT (?s, '_' ) AS ?s) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', 1000, 1 ) AS ?s) WHERE { ?s ?p ?o . }"
     end
 
     it "should support aggregates in addition to SELECT variables" do
-      @query.select(:s).where([:s, :p, :o]).group_digest(:o, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?o, '_', 1000, 1 ) AS ?group_digest) ?s WHERE { ?s ?p ?o . }"
+      @query.select(:s).where([:s, :p, :o]).group_digest(:o, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?o, '_', 1000, 1 ) AS ?o) ?s WHERE { ?s ?p ?o . }"
     end
     
     it "should support ORDER BY" do

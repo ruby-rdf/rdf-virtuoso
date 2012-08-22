@@ -479,7 +479,7 @@ module RDF::Virtuoso
               buffer << '(' + agg.to_s.gsub('_', ' ').upcase
               buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
             end
-            buffer << 'AS ?' + agg.to_s + ')'
+            buffer << 'AS ?' + options[agg].first.to_s + ')'
           end
           buffer << values.map { |v| serialize_value(v[1]) }.join(' ') unless values.empty?
         else

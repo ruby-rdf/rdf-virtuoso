@@ -485,6 +485,7 @@ module RDF::Virtuoso
         else
           buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
         end
+        
       when :construct
         buffer << '{'
         buffer += serialize_patterns(@data_values)
@@ -512,7 +513,7 @@ module RDF::Virtuoso
         buffer << '}'          
         
       when :delete_data
-        buffer << "FROM #{serialize_value(options[:graph])}" #if options[:graph]
+        buffer << "FROM #{serialize_value(options[:graph])}" if options[:graph]
         buffer << '{'
         @data_values.each do |triple|
           if triple.first.first.is_a?(RDF::Statement)

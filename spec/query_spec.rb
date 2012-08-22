@@ -83,7 +83,14 @@ describe RDF::Virtuoso::Query do
       statements = [RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type')), RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type2'))]
       @query.delete_data(statements).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <http://test> <#{RDF.type}> <http://type> .\n <http://test> <#{RDF.type}> <http://type2> .\n }"
     end
-    
+
+    it "should support DELETE DATA queries with appendable objects" do
+      statements = []
+      statements << RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type'))
+      statements << RDF::Statement.new(RDF::URI('http://test'), RDF.type, RDF::URI('http://type2'))
+      @query.delete_data(statements).graph(RDF::URI.new(@graph)).to_s.should == "DELETE DATA FROM <#{@graph}> { <http://test> <#{RDF.type}> <http://type> .\n <http://test> <#{RDF.type}> <http://type2> .\n }"
+    end
+        
     it "should support DELETE WHERE queries with symbols and patterns" do
       @query.delete([:s, :p, :o]).graph(RDF::URI.new(@graph)).where([:s, :p, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s ?p ?o . } WHERE { ?s ?p ?o . }"
       @query.delete([:s, @uri.newtype, :o]).graph(RDF::URI.new(@graph)).where([:s, @uri.newtype, :o]).to_s.should == "DELETE FROM <#{@graph}> { ?s <#{@graph}newtype> ?o . } WHERE { ?s <#{@graph}newtype> ?o . }"
@@ -120,6 +127,11 @@ describe RDF::Virtuoso::Query do
       @query.select(:s, :p, :o).where([:s, :p, :o]).to_s.should == "SELECT ?s ?p ?o WHERE { ?s ?p ?o . }"
     end
 
+    it "should support SELECT from NAMED GRAPH" do
+      @graph = RDF::URI("http://example.org/")
+      @query.select(:s).where([:s, :p, :o]).from(@graph).to_s.should == "SELECT ?s FROM <#{@graph}> WHERE { ?s ?p ?o . }"
+    end
+    
     it "should support SELECT with complex WHERE patterns" do
       @query.select.where(
       [:s, :p, :o], 
@@ -183,9 +195,9 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).order_by(:o).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"
       @query.select.where([:s, :p, :o]).order_by('?o').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"
       # @query.select.where([:s, :p, :o]).order_by(:o => :asc).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o ASC"
-      @query.select.where([:s, :p, :o]).order_by('?o ASC').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o ASC"
+      @query.select.where([:s, :p, :o]).order_by('ASC(?o)').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ASC(?o)"
       # @query.select.where([:s, :p, :o]).order_by(:o => :desc).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o DESC"
-      @query.select.where([:s, :p, :o]).order_by('?o DESC').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o DESC"
+      @query.select.where([:s, :p, :o]).order_by('DESC(?o)').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY DESC(?o)"
     end
 
     it "should support OFFSET" do

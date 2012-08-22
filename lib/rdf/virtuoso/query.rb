@@ -473,7 +473,7 @@ module RDF::Virtuoso
               buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
             when :group_concat, :group_digest
               buffer << '(sql:' + agg.to_s.upcase
-              buffer << options[agg].map { |var| var.is_a?(Symbol) ? "(?#{var}" : "'#{var}'"}.join(', ')
+              buffer << options[agg].map { |var| var.is_a?(Symbol) ? "(?#{var}" : var.is_a?(String) ? "'#{var}'" : var }.join(', ')
               buffer << ')'
             else  
               buffer << '(' + agg.to_s.gsub('_', ' ').upcase

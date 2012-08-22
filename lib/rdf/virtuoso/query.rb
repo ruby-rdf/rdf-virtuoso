@@ -550,7 +550,8 @@ module RDF::Virtuoso
         # does patterns have :context hash? build with GRAPH statement
         if patterns.any? { |p| p.has_context? }
           patterns.each do | pattern|
-            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
+            buffer << '{'
             buffer << serialize_patterns(pattern)
             buffer << '}'
           end
@@ -564,7 +565,8 @@ module RDF::Virtuoso
             
 	        if patterns.any? { |p| p.has_context? }
 	          patterns.each do | pattern|
-	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
+                buffer << '{'
 	            buffer << serialize_patterns(pattern)
 	            buffer << '}'
 	          end
@@ -582,7 +584,8 @@ module RDF::Virtuoso
 
 	        if patterns.any? { |p| p.has_context? }
 	          patterns.each do | pattern|
-	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))} {"
+	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
+                buffer << '{'
 	            buffer << serialize_patterns(pattern)
 	            buffer << '}'
 	          end

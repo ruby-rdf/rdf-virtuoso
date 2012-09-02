@@ -77,6 +77,7 @@ module ActiveRDF
         all(limit: 1).first
       end
 
+      # What does this do?
       def execute(sql)
         results = []
         solutions = connection.select(sql)

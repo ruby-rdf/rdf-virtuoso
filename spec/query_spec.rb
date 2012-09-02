@@ -187,10 +187,33 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', 1000, 1 ) AS ?s) WHERE { ?s ?p ?o . }"
     end
 
+    it "should support multiple instances of SAMPLE" do
+      @query.select.where([:s, :p, :o]).sample(:s).sample(:p).to_s.should == "SELECT (sql:SAMPLE (?s) AS ?s) (sql:SAMPLE (?p) AS ?p) WHERE { ?s ?p ?o . }"
+    end
+
+    it "should support multiple instances of MIN/MAX/AVG/SUM" do
+      @query.select.where([:s, :p, :o]).min(:s).min(:p).to_s.should == "SELECT (MIN (?s) AS ?s) (MIN (?p) AS ?p) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).max(:s).max(:p).to_s.should == "SELECT (MAX (?s) AS ?s) (MAX (?p) AS ?p) WHERE { ?s ?p ?o . }"
+      @query.select.where([:s, :p, :o]).avg(:s).avg(:p).to_s.should == "SELECT (AVG (?s) AS ?s) (AVG (?p) AS ?p) WHERE { ?s ?p ?o . }"      
+      @query.select.where([:s, :p, :o]).sum(:s).sum(:p).to_s.should == "SELECT (SUM (?s) AS ?s) (SUM (?p) AS ?p) WHERE { ?s ?p ?o . }"      
+    end
+    
+    it "should support multiple instances of GROUP_CONCAT" do
+      @query.select.where([:s, :p, :o]).group_concat(:s, '_').group_concat(:p, '-').to_s.should == "SELECT (sql:GROUP_CONCAT (?s, '_' ) AS ?s) (sql:GROUP_CONCAT (?p, '-' ) AS ?p) WHERE { ?s ?p ?o . }"
+    end
+
+    it "should support multiple instances of GROUP_DIGEST" do
+      @query.select.where([:s, :p, :o]).group_digest(:s, '_', 1000, 1).group_digest(:p, '-', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?s, '_', 1000, 1 ) AS ?s) (sql:GROUP_DIGEST (?p, '-', 1000, 1 ) AS ?p) WHERE { ?s ?p ?o . }"
+    end
+            
     it "should support aggregates in addition to SELECT variables" do
       @query.select(:s).where([:s, :p, :o]).group_digest(:o, '_', 1000, 1).to_s.should == "SELECT (sql:GROUP_DIGEST (?o, '_', 1000, 1 ) AS ?o) ?s WHERE { ?s ?p ?o . }"
     end
-    
+
+    it "should support multiple instances of aggregates AND select variables" do
+      @query.select(:s).where([:s, :p, :o]).sample(:p).sample(:o).to_s.should == "SELECT (sql:SAMPLE (?p) AS ?p) (sql:SAMPLE (?o) AS ?o) ?s WHERE { ?s ?p ?o . }"
+    end
+        
     it "should support ORDER BY" do
       @query.select.where([:s, :p, :o]).order_by(:o).to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"
       @query.select.where([:s, :p, :o]).order_by('?o').to_s.should == "SELECT * WHERE { ?s ?p ?o . } ORDER BY ?o"

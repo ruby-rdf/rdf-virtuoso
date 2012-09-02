@@ -306,15 +306,17 @@ module RDF::Virtuoso
     ## SPARQL 1.1 Aggregates
     # @return [Query]
     # @see    http://www.w3.org/TR/sparql11-query/#defn_aggCount
-   # def count(*variables)
-   #   options[:count] = variables
-   #   self
-   # end
+    # def count(*variables)
+    #   options[:count] = variables
+    #   self
+    # end
     AGG_METHODS  = %w(count min max sum avg sample group_concat group_digest)
     
     AGG_METHODS.each do |m|
       define_method m do |*variables|
-        options[m.to_sym] = variables
+        #options[m.to_sym] = variables
+        options[m.to_sym] ||= []
+        options[m.to_sym] += variables
         self
       end
     end
@@ -467,22 +469,47 @@ module RDF::Virtuoso
         aggregates = [:count, :min, :max, :avg, :sum, :sample, :group_concat, :group_digest]
         if (options.keys & aggregates).any?
           (options.keys & aggregates).each do |agg|
+#p options[agg]
             case agg
             when :sample
-              buffer << '(sql:' + agg.to_s.upcase
-              buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
-            when :group_concat, :group_digest
-              buffer << '(sql:' + agg.to_s.upcase
-              buffer << options[agg].map { |var| var.is_a?(Symbol) ? "(?#{var}" : var.is_a?(String) ? "'#{var}'" : var }.join(', ')
-              buffer << ')'
-            else  
-              buffer << '(' + agg.to_s.gsub('_', ' ').upcase
-              buffer << options[agg].map { |var| var.is_a?(String) ? var : "(?#{var})" }
+              # multiple samples splits to individual sample expressions
+              options[agg].each_slice(1) do |a|
+                buffer << '(sql:' + agg.to_s.upcase
+                a.map do |var| 
+                  buffer << (var.is_a?(String) ? var : "(?#{var})")
+                  buffer << "AS ?#{var})"
+                end
+              end
+            when :group_concat
+              # multiple samples splits to individual sample expressions
+              options[agg].each_slice(2) do |a|
+                buffer << '(sql:' + agg.to_s.upcase
+                buffer << a.map {|var| (var.is_a?(Symbol) ? "(?#{var}" : var.is_a?(String) ? "'#{var}'" : var )}.join(', ')
+                buffer << ') AS ?' + a.first.to_s + ')'
+              end
+            when :group_digest
+              # multiple samples splits to individual sample expressions
+              options[agg].each_slice(4) do |a|
+                buffer << '(sql:' + agg.to_s.upcase
+                buffer << a.map {|var| (var.is_a?(Symbol) ? "(?#{var}" : var.is_a?(String) ? "'#{var}'" : var )}.join(', ')
+                buffer << ') AS ?' + a.first.to_s + ')'
+              end              
+            else
+              # multiple samples splits to individual sample expressions
+              options[agg].each_slice(1) do |a|
+                buffer << '(' + agg.to_s.upcase
+                a.map do |var| 
+                  buffer << (var.is_a?(String) ? var : "(?#{var})")
+                  buffer << "AS ?#{var})"
+                end
+              end
             end
-            buffer << 'AS ?' + options[agg].first.to_s + ')'
+            #
           end
+          # also handle variables that are not aggregates
           buffer << values.map { |v| serialize_value(v[1]) }.join(' ') unless values.empty?
         else
+          # no variables? select/describe all (*)
           buffer << (values.empty? ? '*' : values.map { |v| serialize_value(v[1]) }.join(' '))
         end
         

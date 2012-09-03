@@ -236,6 +236,8 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, :p, :o]).slice(100, 10).to_s.should == "SELECT * WHERE { ?s ?p ?o . } OFFSET 100 LIMIT 10"
     end
 
+#  DEPRECATED - USE RDF::Vocabulary instead
+=begin
     it "should support PREFIX" do
       prefixes = ["dc: <http://purl.org/dc/elements/1.1/>", "foaf: <http://xmlns.com/foaf/0.1/>"]
       @query.select.prefix(prefixes[0]).prefix(prefixes[1]).where([:s, :p, :o]).to_s.should ==
@@ -252,6 +254,19 @@ describe RDF::Virtuoso::Query do
       prefixes = RDF::Virtuoso::Prefixes.new foo: "http://foo.com/", bar: "http://bar.net"
       @query.select.prefixes(prefixes).where([:s, :p, :o]).to_s.should ==
         "PREFIX foo: <http://foo.com/> PREFIX bar: <http://bar.net> SELECT * WHERE { ?s ?p ?o . }"
+    end
+
+    it "should support accessing custom PREFIXes in SELECT" do
+      prefixes = RDF::Virtuoso::Prefixes.new foo: "http://foo.com/"
+      @query.select.where(['foo:bar', :p, :o]).prefixes(prefixes).to_s.should ==
+        "PREFIX foo: <http://foo.com/bar> SELECT * WHERE { ?s ?p ?o . }"
+    end
+=end  
+
+    it "should support using custom RDF::Vocabulary prefixes" do
+      BIBO = RDF::Vocabulary.new("http://purl.org/ontology/bibo/")
+      @query.select.where([:s, :p, BIBO.Document]).to_s.should ==
+        "SELECT * WHERE { ?s ?p <http://purl.org/ontology/bibo/Document> . }"
     end
     
     it "should support OPTIONAL" do

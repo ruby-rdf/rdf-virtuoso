@@ -37,21 +37,24 @@ New prefixes can either extend the RDF::Vocabulary class (best if you want to mo
 
     module RDF
       class FOO < RDF::Vocabulary("http://purl.org/ontology/foo/");end
+      class BAR < RDF::Vocabulary("http://bar.net#");end
     end
 
-it can then be easily accessed by RDF::FOO, eg. 
+it can then be easily accessed by RDF superclass, eg. 
 
     RDF::FOO.Document
+    => #<RDF::URI:0x4d273ec(http://purl.org/ontology/foo/Document)> 
+    RDF::BAR.telescope
+    => #<RDF::URI:0x4d294ee(http://bar.net#telescope)> 
 
-or you can use the RDF::Virtuoso::Prefixes class in a query:
+or you can dynamically add RDF::Vocabulary objects
 
-    prefixes = RDF::Virtuoso::Prefixes.new foo: "http://purl.org/ontology/foo/", bar: "http://bar.net"
+    foo = RDF::Vocabulary.new("http://purl.org/ontology/foo/")
 
     QUERY  = RDF::Virtuoso::Query
     graph  = RDF::URI.new("http://test.com")
-    type   =  RDF::FOO.Document
 
-    query  = QUERY.select.where([:s, type, :o]).count(:s).prefixes(prefixes).graph(graph)
+    query  = QUERY.select.where([:s, foo.bar, :o]).count(:s).graph(graph)
     result = repo.select(query)
     
 Results will be an array of RDF::Query::Solution that can be accessed by bindings or iterated

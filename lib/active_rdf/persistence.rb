@@ -97,11 +97,11 @@ module ActiveRDF
 
       # TODO: set baseurl via config
       def subject_for(id)
-        RDF::URI('http://data.deichman.no') / self.name.downcase / "#" / id
+        RDF::URI('http://data.deichman.no') / self.name.downcase / "/id_" / id
       end
 
       def id_for(subject)
-        subject.to_s.split("#").last
+        subject.to_s.split("/").last.gsub('id_', '')
       end
 
       def destroy_all

@@ -93,9 +93,17 @@ module RDF
       end
       
       def api_get(query, options = {})
-        self.class.endpoint @sparql_endpoint
-        get '/', :extra_query => { :query => query }.merge(options), 
-                 :transform => RDF::Virtuoso::Parser::JSON
+        # prefer sparul endpoint with auth if present to allow SELECT/CONSTRUCT access to protected graphs
+        if @sparul_endpoint
+          self.class.endpoint @sparul_endpoint
+          get '/', :extra_query => { :query => query }.merge(options),
+                   :extra_request => extra_request_options,
+                   :transform => RDF::Virtuoso::Parser::JSON
+        else
+          self.class.endpoint @sparql_endpoint
+          get '/', :extra_query => { :query => query }.merge(options), 
+                   :transform => RDF::Virtuoso::Parser::JSON
+        end
       end
 
       def api_post(query, options = {})

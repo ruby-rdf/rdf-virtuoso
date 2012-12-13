@@ -1,5 +1,5 @@
+require File.join(File.dirname(__FILE__), 'spec_helper')
 require_relative '../lib/rdf/virtuoso/prefixes'
-require 'rdf'
 
 describe RDF::Virtuoso::Prefixes do
   subject { RDF::Virtuoso::Prefixes.new(foo: 'bar', baz: 'quux') }

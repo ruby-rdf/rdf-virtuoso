@@ -250,6 +250,14 @@ module RDF::Virtuoso
       self
     end
 
+    # @param string
+    # @return [Query]
+    # @see http://www.w3.org/TR/rdf-sparql-query/#specDataset
+    def define(string)
+      options[:define] = string
+      self
+    end
+    
     # @param RDF::URI uri
     # @return [Query]
     # @see http://www.w3.org/TR/rdf-sparql-query/#specDataset
@@ -460,7 +468,9 @@ module RDF::Virtuoso
     #
     # @return [String]
     def to_s
-      buffer = [form.to_s.gsub('_', ' ').upcase]
+      buffer = []
+      buffer << "DEFINE #{options[:define]}" if options[:define]
+      buffer << [form.to_s.gsub('_', ' ').upcase]
       case form
       when :select, :describe
         buffer << 'DISTINCT' if options[:distinct]

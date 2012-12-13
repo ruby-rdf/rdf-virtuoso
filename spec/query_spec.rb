@@ -44,7 +44,6 @@ describe RDF::Virtuoso::Query do
 
   end
 
-
   context "when building update queries" do
     before :each do
       @graph = "http://example.org/"
@@ -317,7 +316,13 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, RDF::DC.abstract, :o]).filters(filters).to_s.should ==
       "SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . FILTER(lang(?text) != \"nb\") FILTER(regex(?uri, \"^https\")) }"
     end
-    
+
+    it "should support DEFINE headers in queries" do
+      define = 'sql:select-option "ORDER"'
+      @query.select.where([:s, RDF::DC.abstract, :o]).define(define).to_s.should ==
+      "DEFINE #{define} SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . }"
+    end
+        
   end
 
   context "when building DESCRIBE queries" do

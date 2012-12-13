@@ -1,7 +1,7 @@
 require 'rdf/spec'
 require 'rdf'
 require 'rdf/virtuoso'
-require 'active_rdf'
+#require 'active_rdf'
 require 'vcr'
 
 VCR.configure do |c|

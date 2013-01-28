@@ -284,6 +284,13 @@ module RDF::Virtuoso
 
     alias_method :whether, :where
 
+    ## PETTERS TESTNING with grouping patterns
+    ## Same as where, but groups patterns within brackets { }
+    def group(*patterns)
+      @patterns += [Pattern.new(:start_group_pattern)] + build_patterns(patterns) + [Pattern.new(:end_group_pattern)]
+      self
+    end
+
     ##
     # @param  [Array<Symbol, String>] variables
     # @return [Query]
@@ -669,7 +676,13 @@ module RDF::Virtuoso
         patterns.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
       else
         patterns.map do |p|
-          p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+          if p.variables[:start_group_pattern]
+            "{"
+          elsif p.variables[:end_group_pattern]
+            "}"
+          else
+            p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+          end
         end
       end
     end

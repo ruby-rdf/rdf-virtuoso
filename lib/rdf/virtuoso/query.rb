@@ -284,8 +284,11 @@ module RDF::Virtuoso
 
     alias_method :whether, :where
 
-    ## PETTERS TESTNING with grouping patterns
-    ## Same as where, but groups patterns within brackets { }
+    ##
+    # @param  [Array<RDF::Query::Pattern, Array>] patterns
+    # @return [Query]
+    # Group is a non-SPARQL function. It works same as where, but groups the
+    # patterns within brackets: { }, allowing to structure the query.
     def group(*patterns)
       @patterns += [Pattern.new(:start_group_pattern)] + build_patterns(patterns) + [Pattern.new(:end_group_pattern)]
       self
@@ -317,7 +320,7 @@ module RDF::Virtuoso
       options[:reduced] = state
       self
     end
-    
+
     ## SPARQL 1.1 Aggregates
     # @return [Query]
     # @see    http://www.w3.org/TR/sparql11-query/#defn_aggCount

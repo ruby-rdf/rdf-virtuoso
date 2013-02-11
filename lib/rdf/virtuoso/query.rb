@@ -295,6 +295,15 @@ module RDF::Virtuoso
     end
 
     ##
+    # @param RDF::URI uri
+    # @return [Query]
+    # Inline version of graph
+    def graph2(uri)
+      @patterns += [Pattern.new(:graph_statement, uri)]
+      self
+    end
+
+    ##
     # @param  [Array<Symbol, String>] variables
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#modOrderBy
@@ -683,6 +692,8 @@ module RDF::Virtuoso
             "{"
           elsif p.variables[:end_group_pattern]
             "}"
+          elsif p.variables[:graph_statement]
+            "GRAPH #{serialize_value(p[1])}"
           else
             p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
           end

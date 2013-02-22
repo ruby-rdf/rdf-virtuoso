@@ -126,26 +126,34 @@ describe RDF::Virtuoso::Query do
       @query.select(:s, :p, :o).where([:s, :p, :o]).to_s.should == "SELECT ?s ?p ?o WHERE { ?s ?p ?o . }"
     end
 
-    it "should support SELECT from NAMED GRAPH" do
+    it "should support SELECT FROM" do
       @graph = RDF::URI("http://example.org/")
       @query.select(:s).where([:s, :p, :o]).from(@graph).to_s.should == "SELECT ?s FROM <#{@graph}> WHERE { ?s ?p ?o . }"
     end
-    
+
+    it "should support SELECT FROM and FROM NAMED" do
+      @graph1 = RDF::URI("a")
+      @graph2 = RDF::URI("b")
+      @query.select(:s).where([:s, :p, :o, :context => @graph2]).from(@graph1).from_named(@graph2).to_s.should ==
+        "SELECT ?s FROM <#{@graph1}> FROM NAMED <#{@graph2}> WHERE { GRAPH <#{@graph2}> { ?s ?p ?o . } }"
+    end
+
+
     it "should support SELECT with complex WHERE patterns" do
       @query.select.where(
-      [:s, :p, :o], 
+      [:s, :p, :o],
       [:s, RDF.type, RDF::DC.Document]
-      ).to_s.should == 
+      ).to_s.should ==
         "SELECT * WHERE { ?s ?p ?o . ?s <#{RDF.type}> <#{RDF::DC.Document}> . }"
     end
 
     it "should support SELECT WHERE patterns from different GRAPH contexts" do
       @graph1 = "http://example1.org/"
       @graph2 = "http://example2.org/"
-      @query.select.where([:s, :p, :o, :context => @graph1],[:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should == 
+      @query.select.where([:s, :p, :o, :context => @graph1],[:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should ==
         "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.Document}> . } }"
     end
-        
+
     it "should support string objects in SPARQL queries" do
       @query.select.where([:s, :p, "dummyobject"]).to_s.should == "SELECT * WHERE { ?s ?p \"dummyobject\" . }"
     end
@@ -322,7 +330,19 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, RDF::DC.abstract, :o]).define(define).to_s.should ==
       "DEFINE #{define} SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . }"
     end
-        
+
+    it "should support grouping graph patterns within brackets" do
+      @query.select.where.group([:s, :p, :o],[:s2, :p2, :o2]).
+        where([:s3, :p3, :o3]).to_s.should ==
+      "SELECT * WHERE { { ?s ?p ?o . ?s2 ?p2 ?o2 . } ?s3 ?p3 ?o3 . }"
+    end
+
+    it "should support grouping with several graph statements" do
+      @query.select.where.graph2(RDF::URI.new("a")).group([:s, :p, :o],[:s2, :p2, :o2]).
+        where.graph2(RDF::URI.new("b")).group([:s3, :p3, :o3]).to_s.should ==
+        "SELECT * WHERE { GRAPH <a> { ?s ?p ?o . ?s2 ?p2 ?o2 . } GRAPH <b> { ?s3 ?p3 ?o3 . } }"
+    end
+
   end
 
   context "when building DESCRIBE queries" do

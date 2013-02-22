@@ -268,6 +268,13 @@ module RDF::Virtuoso
 
     # @param RDF::URI uri
     # @return [Query]
+    def from_named(uri)
+      options[:from_named] = uri
+      self
+    end
+
+    # @param RDF::URI uri
+    # @return [Query]
     def graph(uri)
       options[:graph] = uri
       self
@@ -283,6 +290,25 @@ module RDF::Virtuoso
     end
 
     alias_method :whether, :where
+
+    ##
+    # @param  [Array<RDF::Query::Pattern, Array>] patterns
+    # @return [Query]
+    # Group is a non-SPARQL function. It works same as where, but groups the
+    # patterns within brackets: { }, allowing to structure the query.
+    def group(*patterns)
+      @patterns += [Pattern.new(:start_group_pattern)] + build_patterns(patterns) + [Pattern.new(:end_group_pattern)]
+      self
+    end
+
+    ##
+    # @param RDF::URI uri
+    # @return [Query]
+    # Inline version of graph
+    def graph2(uri)
+      @patterns += [Pattern.new(:graph_statement, uri)]
+      self
+    end
 
     ##
     # @param  [Array<Symbol, String>] variables
@@ -310,7 +336,7 @@ module RDF::Virtuoso
       options[:reduced] = state
       self
     end
-    
+
     ## SPARQL 1.1 Aggregates
     # @return [Query]
     # @see    http://www.w3.org/TR/sparql11-query/#defn_aggCount
@@ -577,12 +603,14 @@ module RDF::Virtuoso
       end
 
       buffer << "FROM #{serialize_value(options[:from])}" if options[:from]
+      buffer << "FROM NAMED #{serialize_value(options[:from_named])}" if options[:from_named]
+
 
       unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))
         buffer << 'WHERE {'
-        
+
         buffer << '{' if options[:unions]
-        
+
         # iterate patterns
         # does patterns have :context hash? build with GRAPH statement
         if patterns.any? { |p| p.has_context? }
@@ -669,7 +697,15 @@ module RDF::Virtuoso
         patterns.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
       else
         patterns.map do |p|
-          p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+          if p.variables[:start_group_pattern]
+            "{"
+          elsif p.variables[:end_group_pattern]
+            "}"
+          elsif p.variables[:graph_statement]
+            "GRAPH #{serialize_value(p[1])}"
+          else
+            p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+          end
         end
       end
     end

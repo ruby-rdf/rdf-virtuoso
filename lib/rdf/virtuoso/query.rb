@@ -268,6 +268,13 @@ module RDF::Virtuoso
 
     # @param RDF::URI uri
     # @return [Query]
+    def from_named(uri)
+      options[:from_named] = uri
+      self
+    end
+
+    # @param RDF::URI uri
+    # @return [Query]
     def graph(uri)
       options[:graph] = uri
       self
@@ -577,12 +584,14 @@ module RDF::Virtuoso
       end
 
       buffer << "FROM #{serialize_value(options[:from])}" if options[:from]
+      buffer << "FROM NAMED #{serialize_value(options[:from_named])}" if options[:from_named]
+
 
       unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))
         buffer << 'WHERE {'
-        
+
         buffer << '{' if options[:unions]
-        
+
         # iterate patterns
         # does patterns have :context hash? build with GRAPH statement
         if patterns.any? { |p| p.has_context? }

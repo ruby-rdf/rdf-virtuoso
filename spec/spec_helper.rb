@@ -1,3 +1,6 @@
-require 'rdf/spec'
+require 'bundler/setup'
+require 'rspec'
 require 'rdf'
+require 'rdf/spec'
 require 'rdf/virtuoso'
+require 'rdf/spec/repository'

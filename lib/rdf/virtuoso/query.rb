@@ -613,32 +613,32 @@ module RDF::Virtuoso
 
         # iterate patterns
         # does patterns have :context hash? build with GRAPH statement
-        if patterns.any? { |p| p.has_context? }
-          patterns.each do | pattern|
-            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
+        patterns.each do | pattern|
+          if pattern.context
+            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}"
             buffer << '{'
             buffer << serialize_patterns(pattern)
             buffer << '}'
+          else
+            buffer << serialize_patterns(pattern)
           end
-        else
-          buffer += serialize_patterns(patterns)
         end
-         
+
         if options[:optionals]
           options[:optionals].each do |patterns|
             buffer << 'OPTIONAL {'
-            
-	        if patterns.any? { |p| p.has_context? }
-	          patterns.each do | pattern|
-	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
-                buffer << '{'
-	            buffer << serialize_patterns(pattern)
-	            buffer << '}'
-	          end
-	        else
-	          buffer += serialize_patterns(patterns)
-	        end
-            
+
+	        patterns.each do | pattern|
+          if pattern.context
+            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}"
+            buffer << '{'
+            buffer << serialize_patterns(pattern)
+            buffer << '}'
+          else
+            buffer << serialize_patterns(pattern)
+          end
+        end
+
             buffer << '}'
           end
         end
@@ -647,21 +647,21 @@ module RDF::Virtuoso
           options[:minuses].each do |patterns|
             buffer << 'MINUS {'
 
-	        if patterns.any? { |p| p.has_context? }
-	          patterns.each do | pattern|
-	            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}" if pattern.context
-                buffer << '{'
-	            buffer << serialize_patterns(pattern)
-	            buffer << '}'
-	          end
-	        else
-	          buffer += serialize_patterns(patterns)
-	        end
+	        patterns.each do | pattern|
+          if pattern.context
+            buffer << "GRAPH #{serialize_value(RDF::URI(pattern.context))}"
+            buffer << '{'
+            buffer << serialize_patterns(pattern)
+            buffer << '}'
+          else
+            buffer << serialize_patterns(pattern)
+          end
+        end
 
             buffer << '}'
           end
         end
-                
+
         if options[:filters]
           buffer += options[:filters].map { |filter| "FILTER(#{filter})" }
         end
@@ -694,18 +694,18 @@ module RDF::Virtuoso
     # @private
     def serialize_patterns(patterns)
       if patterns.is_a?(RDF::Query::Pattern)
-        patterns.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+        if patterns.variables[:start_group_pattern]
+          "{"
+        elsif patterns.variables[:end_group_pattern]
+          "}"
+        elsif patterns.variables[:graph_statement]
+          "GRAPH #{serialize_value(patterns[1])}"
+        else
+          patterns.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
+        end
       else
         patterns.map do |p|
-          if p.variables[:start_group_pattern]
-            "{"
-          elsif p.variables[:end_group_pattern]
-            "}"
-          elsif p.variables[:graph_statement]
-            "GRAPH #{serialize_value(p[1])}"
-          else
-            p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
-          end
+          p.to_triple.map { |v| serialize_value(v) }.join(' ') << " ."
         end
       end
     end

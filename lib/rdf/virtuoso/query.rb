@@ -269,8 +269,10 @@ module RDF::Virtuoso
     # @param RDF::URI uri
     # @return [Query]
     def from_named(uri)
-      options[:from_named] = uri
+      (options[:from_named] ||= []) << uri
       self
+      #options[:from_named] = uri
+      #self
     end
 
     # @param RDF::URI uri
@@ -584,7 +586,7 @@ module RDF::Virtuoso
       end
 
       buffer << "FROM #{serialize_value(options[:from])}" if options[:from]
-      buffer << "FROM NAMED #{serialize_value(options[:from_named])}" if options[:from_named]
+      options[:from_named].each {|from_named| buffer << "FROM NAMED #{serialize_value(from_named)}" } if options[:from_named]
 
 
       unless patterns.empty? && ([:describe, :insert_data, :delete_data, :create, :clear, :drop].include?(form))

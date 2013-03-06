@@ -138,6 +138,13 @@ describe RDF::Virtuoso::Query do
         "SELECT ?s FROM <#{@graph1}> FROM NAMED <#{@graph2}> WHERE { GRAPH <#{@graph2}> { ?s ?p ?o . } }"
     end
 
+    it "should support one SELECT FROM and multiple FROM NAMED" do
+      @graph1 = RDF::URI("a")
+      @graph2 = RDF::URI("b")
+      @graph3 = RDF::URI("c")
+      @query.select(:s).where([:s, :p, :o, :context => @graph2], [:s, :p, :o, :context => @graph3]).from(@graph1).from_named(@graph2).from_named(@graph3).to_s.should ==
+        "SELECT ?s FROM <#{@graph1}> FROM NAMED <#{@graph2}> FROM NAMED <#{@graph3}> WHERE { GRAPH <#{@graph2}> { ?s ?p ?o . } GRAPH <#{@graph3}> { ?s ?p ?o . } }"
+    end
 
     it "should support SELECT with complex WHERE patterns" do
       @query.select.where(

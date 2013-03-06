@@ -337,7 +337,19 @@ describe RDF::Virtuoso::Query do
       @query.select.where([:s, RDF::DC.abstract, :o]).define(define).to_s.should ==
       "DEFINE #{define} SELECT * WHERE { ?s <#{RDF::DC.abstract}> ?o . }"
     end
-        
+
+    it "should support grouping graph patterns within brackets" do
+      @query.select.where.group([:s, :p, :o],[:s2, :p2, :o2]).
+        where([:s3, :p3, :o3]).to_s.should ==
+      "SELECT * WHERE { { ?s ?p ?o . ?s2 ?p2 ?o2 . } ?s3 ?p3 ?o3 . }"
+    end
+
+    it "should support grouping with several graph statements" do
+      @query.select.where.graph2(RDF::URI.new("a")).group([:s, :p, :o],[:s2, :p2, :o2]).
+        where.graph2(RDF::URI.new("b")).group([:s3, :p3, :o3]).to_s.should ==
+        "SELECT * WHERE { GRAPH <a> { ?s ?p ?o . ?s2 ?p2 ?o2 . } GRAPH <b> { ?s3 ?p3 ?o3 . } }"
+    end
+
   end
 
   context "when building DESCRIBE queries" do

@@ -4,7 +4,7 @@ require 'uri'
 
 module RDF
   module Virtuoso
-    class Repository < RDF::Repository
+    class Repository
       include APISmith::Client
 
       RESULT_JSON = 'application/sparql-results+json'.freeze

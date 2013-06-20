@@ -1,6 +1,7 @@
 require 'api_smith'
 require 'rdf'
 require 'uri'
+require 'timeout'
 
 module RDF
   module Virtuoso
@@ -30,9 +31,10 @@ module RDF
         @update_uri      = URI.parse(opts[:update_uri]) if opts[:update_uri]
         @base_uri        = "#{@uri.scheme}://#{@uri.host}"
         @base_uri       += ":" + @uri.port.to_s if @uri.port
-        @username        = opts[:username]    || nil 
+        @username        = opts[:username]    || nil
         @password        = opts[:password]    || nil
         @auth_method     = opts[:auth_method] || 'digest'
+        @timeout         = opts[:timeout]     || 5 # default timeout 5 seconds
 
         @sparql_endpoint = @uri.request_uri
         @sparul_endpoint = @update_uri.nil? ? @sparql_endpoint : @update_uri.request_uri
@@ -87,31 +89,37 @@ module RDF
           { :digest_auth => auth }
         end
       end
-      
+
       def auth
         { :username => @username, :password => @password }
       end
-      
+
       def api_get(query, options = {})
         # prefer sparul endpoint with auth if present to allow SELECT/CONSTRUCT access to protected graphs
         if @sparul_endpoint
           self.class.endpoint @sparul_endpoint
-          get '/', :extra_query => { :query => query }.merge(options),
-                   :extra_request => extra_request_options,
-                   :transform => RDF::Virtuoso::Parser::JSON
+          Timeout::timeout(@timeout) {
+            get '/', :extra_query => { :query => query }.merge(options),
+                     :extra_request => extra_request_options,
+                     :transform => RDF::Virtuoso::Parser::JSON
+          }
         else
           self.class.endpoint @sparql_endpoint
-          get '/', :extra_query => { :query => query }.merge(options), 
-                   :transform => RDF::Virtuoso::Parser::JSON
+          Timeout::timeout(@timeout) {
+            get '/', :extra_query => { :query => query }.merge(options),
+                     :transform => RDF::Virtuoso::Parser::JSON
+          }
         end
       end
 
       def api_post(query, options = {})
         self.class.endpoint @sparul_endpoint
-        post '/', :extra_body => { :query => query }.merge(options), 
-                  :extra_request => extra_request_options,
-                  :response_container => [
-                    "results", "bindings", 0, "callret-0", "value"]
+        Timeout::timeout(@timeout) {
+          post '/', :extra_body => { :query => query }.merge(options),
+                    :extra_request => extra_request_options,
+                    :response_container => [
+                      "results", "bindings", 0, "callret-0", "value"]
+        }
       end
 
     end

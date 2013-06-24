@@ -40,7 +40,7 @@ module RDF
       end
 
       READ_METHODS  = %w(select ask construct describe)
-      WRITE_METHODS = %w(query insert insert_data update delete delete_data create drop clear)
+      WRITE_METHODS = %w(insert insert_data update delete delete_data create drop clear)
 
       READ_METHODS.each do |m|
         define_method m do |*args|
@@ -52,6 +52,49 @@ module RDF
         define_method m do |*args|
           response = api_post *args
         end
+      end
+
+
+      def query(pattern, &block)
+        case pattern
+          when RDF::Statement
+            query(pattern.to_hash)
+          when Array
+            query(RDF::Statement.new(*pattern))
+          when Hash
+            statements = []
+            results = query_attributes(pattern)
+            results.each do |r|
+              statements << RDF::Statement.new(
+                  :subject   => pattern[:subject],
+                  :predicate => r[:predicate],
+                  :object    => r[:object],
+                  :context   => nil
+              )
+            end
+
+            case block_given?
+              when true
+                  statements.each(&block)
+              else
+                  statements.extend(RDF::Enumerable, RDF::Queryable)
+            end
+          else
+              super(pattern)
+        end
+      end
+
+      def query_attributes(hash)
+        conditions = []
+        [:subject, :predicate, :object].each do |resource|
+          if hash[resource].nil?
+            conditions << resource
+          else
+            conditions << hash[resource]
+          end
+        end
+        query  = RDF::Virtuoso::Query.select.where(conditions)
+        api_get query
       end
 
       private
@@ -72,7 +115,7 @@ module RDF
       end
 
       def base_query_options
-        { :format => 'json' }
+        { :format => RESULT_JSON }
       end
 
       def base_request_options
@@ -95,20 +138,23 @@ module RDF
       def api_get(query, options = {})
         # prefer sparul endpoint with auth if present to allow SELECT/CONSTRUCT access to protected graphs
         if @sparul_endpoint
-          self.class.endpoint @sparul_endpoint
-          get '/', :extra_query => { :query => query }.merge(options),
+          # self.class.endpoint @sparul_endpoint
+          self.class.endpoint ""
+          get '/sparql', :extra_query => { :query => query }.merge(options),
                    :extra_request => extra_request_options,
                    :transform => RDF::Virtuoso::Parser::JSON
         else
-          self.class.endpoint @sparql_endpoint
-          get '/', :extra_query => { :query => query }.merge(options), 
+          # self.class.endpoint @sparql_endpoint
+          self.class.endpoint ""
+          get '/sparql', :extra_query => { :query => query }.merge(options),
                    :transform => RDF::Virtuoso::Parser::JSON
         end
       end
 
       def api_post(query, options = {})
-        self.class.endpoint @sparul_endpoint
-        post '/', :extra_body => { :query => query }.merge(options), 
+        # self.class.endpoint @sparul_endpoint
+        self.class.endpoint ""
+        post '/sparql', :extra_body => { :query => query }.merge(options),
                   :extra_request => extra_request_options,
                   :response_container => [
                     "results", "bindings", 0, "callret-0", "value"]

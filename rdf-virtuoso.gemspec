@@ -18,11 +18,11 @@ Gem::Specification.new do |s|
   s.files        += Dir['spec/**/*.rb'] + Dir['doc/**/**/*.rb']
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'rspec', '~> 2.13.0'
-  s.add_development_dependency 'rdf-spec', '~> 1.0.0'
+  s.add_development_dependency 'rspec'#, '~> 2.13.0'
+  s.add_development_dependency 'rdf-spec'#, '~> 1.0.0'
 
-  s.add_runtime_dependency 'rdf', '~> 1.0.3'
-  s.add_runtime_dependency 'httparty', '~> 0.10.2'
-  s.add_runtime_dependency 'api_smith', '~> 1.2.0'
+  s.add_runtime_dependency 'rdf'#, '~> 1.0.3'
+  s.add_runtime_dependency 'httparty'#, '~> 0.10.2'
+  s.add_runtime_dependency 'api_smith'#, '~> 1.2.0'
 
 end

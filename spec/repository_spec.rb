@@ -33,4 +33,9 @@ describe RDF::Virtuoso::Repository do
       repo = RDF::Virtuoso::Repository.new(@uri, :update_uri => @update_uri, :username => 'admin', :password => 'secret', :auth_method => 'digest')
       repo.instance_variable_get("@sparul_endpoint").should == "/sparql-auth"
     end
+    
+    it "should support timeout option" do
+      repo = RDF::Virtuoso::Repository.new(@uri, :timeout => 10)
+      repo.instance_variable_get("@timeout").should == 10
+    end
 end

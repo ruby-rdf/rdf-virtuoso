@@ -74,7 +74,8 @@ module RDF
       end
 
       def base_query_options
-        { :format => 'json' }
+        #{ :format => 'json' }
+        { :format => RESULT_JSON }
       end
 
       def base_request_options

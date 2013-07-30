@@ -10,7 +10,8 @@ Gem::Specification.new do |s|
   s.email       = ['benjamin.rokseth@kul.oslo.kommune.no']
   s.homepage    = 'https://github.com/digibib/rdf-virtuoso'
   s.summary     = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store}
-  s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store}
+  s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store.\nSupports SPARQL 1.1 UPDATE extensions and some Virtuoso specific commands.}
+  s.licenses    = ['GPL-3']
 
   s.rubyforge_project = 'rdf-virtuoso'
 

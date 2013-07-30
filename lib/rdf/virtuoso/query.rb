@@ -228,13 +228,6 @@ module RDF::Virtuoso
       self
     end
     
-#    def delete(*variables)
-#      @values = variables.map { |var|
-#        [var, var.is_a?(RDF::URI) ? var : RDF::Query::Variable.new(var)]
-#      }
-#      self
-#    end
-
     def create(uri)
       options[:graph] = uri
       self
@@ -271,8 +264,6 @@ module RDF::Virtuoso
     def from_named(uri)
       (options[:from_named] ||= []) << uri
       self
-      #options[:from_named] = uri
-      #self
     end
 
     # @param RDF::URI uri
@@ -350,7 +341,6 @@ module RDF::Virtuoso
     
     AGG_METHODS.each do |m|
       define_method m do |*variables|
-        #options[m.to_sym] = variables
         options[m.to_sym] ||= []
         options[m.to_sym] += variables
         self
@@ -507,7 +497,6 @@ module RDF::Virtuoso
         aggregates = [:count, :min, :max, :avg, :sum, :sample, :group_concat, :group_digest]
         if (options.keys & aggregates).any?
           (options.keys & aggregates).each do |agg|
-#p options[agg]
             case agg
             when :sample
               # multiple samples splits to individual sample expressions

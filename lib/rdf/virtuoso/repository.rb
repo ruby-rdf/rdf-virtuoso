@@ -5,7 +5,7 @@ require 'timeout'
 
 module RDF
   module Virtuoso
-    class Repository
+    class Repository < ::RDF::Repository
       include APISmith::Client
 
       RESULT_JSON = 'application/sparql-results+json'.freeze
@@ -20,7 +20,6 @@ module RDF
       class NotAuthorized < ClientError; end
       class ServerError < StandardError; end
 
-      # TODO: Look at issues with HTTParty Connection reset
       #persistent
       maintain_method_across_redirects true
 
@@ -41,8 +40,8 @@ module RDF
         self.class.base_uri @base_uri
       end
 
-      READ_METHODS  = %w(select ask construct describe)
-      WRITE_METHODS = %w(query insert insert_data update delete delete_data create drop clear)
+      READ_METHODS  = %w(query select ask construct describe)
+      WRITE_METHODS = %w(insert insert_data update delete delete_data create drop clear)
 
       READ_METHODS.each do |m|
         define_method m do |*args|
@@ -74,7 +73,6 @@ module RDF
       end
 
       def base_query_options
-        #{ :format => 'json' }
         { :format => RESULT_JSON }
       end
 
@@ -107,6 +105,7 @@ module RDF
         else
           self.class.endpoint @sparql_endpoint
           Timeout::timeout(@timeout) {
+          puts self.inspect
             get '/', :extra_query => { :query => query }.merge(options),
                      :transform => RDF::Virtuoso::Parser::JSON
           }

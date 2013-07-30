@@ -1,19 +1,19 @@
 $:.unshift "."
-require 'spec_helper'
+require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'rdf/spec/repository'
+
 #require_relative '../lib/rdf/virtuoso/repository'
+
 describe RDF::Virtuoso::Repository do
 
   before(:each) do
     @uri = "http://localhost:8890/sparql"
     @update_uri = "http://localhost:8890/sparql-auth"
+    @repository = RDF::Virtuoso::Repository.new(@uri)
   end
-  
-    it "should mixin RDF::Repository" do
-      @repository = RDF::Virtuoso::Repository.new(@uri)
-      #it_should_behave_like RDF_Repository # not working!
-    end
-    
+
+    #include RDF_Repository  # not implemented
+      
     it "should support connecting to a Virtuoso SPARQL endpoint" do
       repo = RDF::Virtuoso::Repository.new(@uri)
       repo.instance_variable_get("@sparul_endpoint").should == "/sparql"
@@ -37,5 +37,12 @@ describe RDF::Virtuoso::Repository do
     it "should support timeout option" do
       repo = RDF::Virtuoso::Repository.new(@uri, :timeout => 10)
       repo.instance_variable_get("@timeout").should == 10
+    end
+    
+    it "should support custom query" do
+      q = "CONSTRUCT {?s a rdf:resource} WHERE {?s a ?type} LIMIT 1"
+      repo = RDF::Virtuoso::Repository.new(@uri, :update_uri => @update_uri, :username => 'dba', :password => 'virtuoso99admin', :auth_method => 'digest')
+      result = repo.query(q)
+      result.first[:p].should == RDF.type
     end
 end

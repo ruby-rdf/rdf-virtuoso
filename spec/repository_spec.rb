@@ -39,10 +39,4 @@ describe RDF::Virtuoso::Repository do
       repo.instance_variable_get("@timeout").should == 10
     end
     
-    it "should support custom query" do
-      q = "CONSTRUCT {?s a rdf:resource} WHERE {?s a ?type} LIMIT 1"
-      repo = RDF::Virtuoso::Repository.new(@uri, :update_uri => @update_uri, :username => 'dba', :password => 'virtuoso99admin', :auth_method => 'digest')
-      result = repo.query(q)
-      result.first[:p].should == RDF.type
-    end
 end

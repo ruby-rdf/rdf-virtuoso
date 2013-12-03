@@ -20,10 +20,10 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec', '~> 2.14.1'
-  s.add_development_dependency 'rdf-spec', '~> 1.0.7'
+  s.add_development_dependency 'rdf-spec', '~> 1.0.9'
 
-  s.add_runtime_dependency 'rdf', '~> 1.0.7'
-  s.add_runtime_dependency 'httparty', '~> 0.11.0'
+  s.add_runtime_dependency 'rdf', '~> 1.0.10.2'
+  s.add_runtime_dependency 'httparty', '~> 0.12.0'
   s.add_runtime_dependency 'api_smith', '~> 1.3.0'
 
 end

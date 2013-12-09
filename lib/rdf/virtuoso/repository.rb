@@ -25,7 +25,7 @@ module RDF
 
       attr_reader :uri, :update_uri, :username, :password, :auth_method
 
-      def initialize(uri, opts={})
+      def initialize(uri, opts={}, &block)
         @uri             = URI.parse(uri)
         @update_uri      = URI.parse(opts[:update_uri]) if opts[:update_uri]
         @base_uri        = "#{@uri.scheme}://#{@uri.host}"
@@ -54,7 +54,7 @@ module RDF
           response = api_post *args
         end
       end
-
+      
       private
 
       def check_response_errors(response)

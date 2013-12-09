@@ -149,16 +149,16 @@ describe RDF::Virtuoso::Query do
     it "should support SELECT with complex WHERE patterns" do
       @query.select.where(
       [:s, :p, :o],
-      [:s, RDF.type, RDF::DC.Document]
+      [:s, RDF.type, RDF::DC.BibliographicResource]
       ).to_s.should ==
-        "SELECT * WHERE { ?s ?p ?o . ?s <#{RDF.type}> <#{RDF::DC.Document}> . }"
+        "SELECT * WHERE { ?s ?p ?o . ?s <#{RDF.type}> <#{RDF::DC.BibliographicResource}> . }"
     end
 
     it "should support SELECT WHERE patterns from different GRAPH contexts" do
       @graph1 = "http://example1.org/"
       @graph2 = "http://example2.org/"
-      @query.select.where([:s, :p, :o, :context => @graph1],[:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should ==
-        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.Document}> . } }"
+      @query.select.where([:s, :p, :o, :context => @graph1],[:s, RDF.type, RDF::DC.BibliographicResource, :context => @graph2]).to_s.should ==
+        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.BibliographicResource}> . } }"
     end
 
     it "should support string objects in SPARQL queries" do
@@ -291,8 +291,8 @@ describe RDF::Virtuoso::Query do
     it "should support OPTIONAL with GRAPH contexts" do
       @graph1 = "http://example1.org/"
       @graph2 = "http://example2.org/"
-      @query.select.where([:s, :p, :o, :context => @graph1]).optional([:s, RDF.type, RDF::DC.Document, :context => @graph2]).to_s.should == 
-        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } OPTIONAL { GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.Document}> . } } }"
+      @query.select.where([:s, :p, :o, :context => @graph1]).optional([:s, RDF.type, RDF::DC.BibliographicResource, :context => @graph2]).to_s.should == 
+        "SELECT * WHERE { GRAPH <#{@graph1}> { ?s ?p ?o . } OPTIONAL { GRAPH <#{@graph2}> { ?s <#{RDF.type}> <#{RDF::DC.BibliographicResource}> . } } }"
     end
     
     it "should support multiple OPTIONALs" do

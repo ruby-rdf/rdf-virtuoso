@@ -2,8 +2,6 @@ $:.unshift "."
 require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'rdf/spec/repository'
 
-#require_relative '../lib/rdf/virtuoso/repository'
-
 describe RDF::Virtuoso::Repository do
 
   before(:each) do
@@ -11,7 +9,7 @@ describe RDF::Virtuoso::Repository do
     @update_uri = "http://localhost:8890/sparql-auth"
     @repository = RDF::Virtuoso::Repository.new(@uri)
   end
-
+  
     #include RDF_Repository  # not implemented
       
     it "should support connecting to a Virtuoso SPARQL endpoint" do

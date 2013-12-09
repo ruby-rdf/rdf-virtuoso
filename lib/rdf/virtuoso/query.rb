@@ -476,10 +476,10 @@ module RDF::Virtuoso
 
     ##
     # @return [Object]
-    def execute
+    # def execute
       #query
       #raise NotImplementedError
-    end
+    # end
 
     ##
     # Returns the string representation of this query.

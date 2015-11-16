@@ -19,10 +19,10 @@ This example assumes you have a local installation of Virtoso running at standar
     uri        = "http://localhost:8890/sparql"
     update_uri = "http://localhost:8890/sparql-auth"
     repo       = RDF::Virtuoso::Repository.new(uri, 
-                    :update_uri => update_uri, 
-                    :username => 'admin', 
-                    :password => 'secret', 
-                    :auth_method => 'digest')
+                    update_uri: update_uri, 
+                    username: 'admin', 
+                    password: 'secret', 
+                    auth_method: 'digest')
 
 :auth_method can be 'digest' or 'basic'. a repository connection without auth requires only uri
 

@@ -73,24 +73,24 @@ module RDF
       end
 
       def base_query_options
-        { :format => RESULT_JSON }
+        { format: RESULT_JSON }
       end
 
       def base_request_options
-        { :headers => headers }
+        { headers: headers }
       end
 
       def extra_request_options
         case @auth_method
         when 'basic'
-          { :basic_auth => auth }
+          { basic_auth: auth }
         when 'digest'
-          { :digest_auth => auth }
+          { digest_auth: auth }
         end
       end
 
       def auth
-        { :username => @username, :password => @password }
+        { username: @username, password: @password }
       end
 
       def api_get(query, options = {})
@@ -98,16 +98,16 @@ module RDF
         if @sparul_endpoint
           self.class.endpoint @sparul_endpoint
           Timeout::timeout(@timeout) {
-            get '/', :extra_query => { :query => query }.merge(options),
-                     :extra_request => extra_request_options,
-                     :transform => RDF::Virtuoso::Parser::JSON
+            get '/', extra_query: { query: query }.merge(options),
+                     extra_request: extra_request_options,
+                     transform: RDF::Virtuoso::Parser::JSON
           }
         else
           self.class.endpoint @sparql_endpoint
           Timeout::timeout(@timeout) {
           puts self.inspect
-            get '/', :extra_query => { :query => query }.merge(options),
-                     :transform => RDF::Virtuoso::Parser::JSON
+            get '/', extra_query: { query: query }.merge(options),
+                     transform: RDF::Virtuoso::Parser::JSON
           }
         end
       end
@@ -115,9 +115,9 @@ module RDF
       def api_post(query, options = {})
         self.class.endpoint @sparul_endpoint
         Timeout::timeout(@timeout) {
-          post '/', :extra_body => { :query => query }.merge(options),
-                    :extra_request => extra_request_options,
-                    :response_container => [
+          post '/', extra_body: { query: query }.merge(options),
+                    extra_request: extra_request_options,
+                    response_container: [
                       "results", "bindings", 0, "callret-0", "value"]
         }
       end

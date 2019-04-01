@@ -20,5 +20,5 @@ matrix:
   allow_failures:
     - rvm: jruby-9
     - rvm: rbx-3
-      
+
 dist: trusty

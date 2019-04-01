@@ -1,6 +1,8 @@
 # rdf-virtuoso: Ruby Virtuoso adapter for RDF.rb
 The intent of this class is to act as an abstraction for clients wishing to connect and manipulate linked data stored in a Virtuoso Quad store.
 
+[![Build Status](https://secure.travis-ci.org/ruby-rdf/rdf-virtuoso.png)](http://travis-ci.org/ruby-rdf/rdf-virtuoso)
+
 ## How?
 RDF::Virtuoso::Repository subclasses RDF::Repository built on RDF.rb and is the main connection class built on top of APISmith to establish the read and write methods to a Virtuoso store SPARQL endpoint.
 RDF::Virtuoso::Query subclasses RDF::Query and adds SPARQL 1.1. update methods (insert, delete, aggregates, etc.).

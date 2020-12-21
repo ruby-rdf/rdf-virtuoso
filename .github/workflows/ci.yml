@@ -23,9 +23,9 @@ jobs:
           - 2.5
           - 2.6
           - 2.7
-          - ruby-head
+          #- ruby-head # Eventualy
           - jruby
-          - rbx
+          - rbx-3
     steps:
       - name: Clone repository
         uses: actions/checkout@v2

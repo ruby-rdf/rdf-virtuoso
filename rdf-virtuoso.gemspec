@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path('../lib', __FILE__)
-require 'rdf/virtuoso'
 
 Gem::Specification.new do |s|
   s.name        = 'rdf-virtuoso'
@@ -14,10 +12,7 @@ Gem::Specification.new do |s|
   s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store.\nSupports SPARQL 1.1 UPDATE extensions and some Virtuoso specific commands.}
   s.licenses    = ['GPL-3']
 
-  s.rubyforge_project = 'rdf-virtuoso'
-
-  s.files         = %w(README.md) + Dir.glob('lib/**/*.rb')
-  s.files        += Dir['spec/**/*.rb'] + Dir['doc/**/**/*.rb']
+  s.files         = %w(README.md VERSION) + Dir.glob('lib/**/*.rb')
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'rdf', '~> 3.1'

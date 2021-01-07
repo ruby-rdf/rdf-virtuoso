@@ -1,5 +1,0 @@
-<http://greggkellogg.net/#me> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Person> .
-<http://greggkellogg.net/#me> <http://xmlns.com/foaf/0.1/name> "Gregg Kellogg" .
-<http://greggkellogg.net/#me> <http://xmlns.com/foaf/0.1/mbox> <mailto:gregg@greggkellogg.net> .
-<http://greggkellogg.net/#me> <http://xmlns.com/foaf/0.1/mbox_sha1sum> "b7a856d39fc3f02573271d9901f1f9107147f657" .
-<http://greggkellogg.net/#me> <http://xmlns.com/foaf/0.1/homepage> <http://greggkellogg.net/> .

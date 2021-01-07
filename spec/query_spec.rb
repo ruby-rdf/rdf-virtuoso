@@ -155,8 +155,8 @@ describe RDF::Virtuoso::Query do
     end
 
     it "should support SELECT WHERE patterns from different GRAPH names" do
-      graph1 = "http://example1.org/"
-      graph2 = "http://example2.org/"
+      graph1 = RDF::URI("http://example1.org/")
+      graph2 = RDF::URI("http://example2.org/")
       expect(subject.select.where([:s, :p, :o, graph_name: graph1],[:s, RDF.type, RDF::Vocab::DC.BibliographicResource, graph_name: graph2]).to_s).to eql(
         "SELECT * WHERE { GRAPH <#{graph1}> { ?s ?p ?o . } GRAPH <#{graph2}> { ?s <#{RDF.type}> <#{RDF::Vocab::DC.BibliographicResource}> . } }"
       )
@@ -293,8 +293,8 @@ describe RDF::Virtuoso::Query do
     end
 
     it "should support OPTIONAL with GRAPH names" do
-      graph1 = "http://example1.org/"
-      graph2 = "http://example2.org/"
+      graph1 = RDF::URI("http://example1.org/")
+      graph2 = RDF::URI("http://example2.org/")
       expect(subject.select.where([:s, :p, :o, graph_name: graph1]).optional([:s, RDF.type, RDF::Vocab::DC.BibliographicResource, graph_name: graph2]).to_s).to eql(
         "SELECT * WHERE { GRAPH <#{graph1}> { ?s ?p ?o . } OPTIONAL { GRAPH <#{graph2}> { ?s <#{RDF.type}> <#{RDF::Vocab::DC.BibliographicResource}> . } } }"
       )
@@ -319,7 +319,7 @@ describe RDF::Virtuoso::Query do
     end
 
     it "should support MINUS with a GRAPH name" do
-      graph1 = "http://example1.org/"
+      graph1 = RDF::URI("http://example1.org/")
       expect(subject.select.where([:s, :p, :o]).minus([:s, RDF.type, :o, graph_name: graph1]).to_s).to eql(
         "SELECT * WHERE { ?s ?p ?o . MINUS { GRAPH <#{graph1}> { ?s <#{RDF.type}> ?o . } } }"
       )

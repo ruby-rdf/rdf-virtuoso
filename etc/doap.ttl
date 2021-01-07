@@ -1,4 +1,4 @@
-@base         <http://rubygems.org/gems/rdf> .
+@base         <https://rubygems.org/gems/rdf> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc:   <http://purl.org/dc/terms/> .
@@ -6,48 +6,27 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 
 <> a doap:Project ;
-  doap:name          "RDF.rb" ;
-  doap:homepage      <http://rdf.rubyforge.org/> ;
-  doap:license       <http://creativecommons.org/licenses/publicdomain/> ;
-  doap:shortdesc     "A Ruby library for working with Resource Description Framework (RDF) data."@en ;
-  doap:description   "RDF.rb is a pure-Ruby library for working with Resource Description Framework (RDF) data."@en ;
+  doap:name          "RDF::Virtuoso" ;
+  doap:homepage      <https://github.com/ruby-rdf/rdf-vituoso> ;
+  doap:license       <https://www.gnu.org/licenses/gpl-3.0> ;
+  doap:shortdesc     "An RDF.rb extension library for interacting with a Virtuoso rdf store."@en ;
+  doap:description   "An RDF.rb extension library for interacting with a Virtuoso rdf store.\nSupports SPARQL 1.1 UPDATE extensions and some Virtuoso specific commands."@en ;
   doap:created       "2007-10-23" ;
-  doap:platform      "Ruby" ;
+  doap:programming-language "Ruby" ;
   doap:category      <http://dbpedia.org/resource/Resource_Description_Framework>,
                      <http://dbpedia.org/resource/Ruby_(programming_language)> ;
-  doap:download-page <http://rubyforge.org/projects/rdf/> ;
-  doap:bug-database  <http://github.com/bendiken/rdf/issues> ;
-  doap:blog          <http://ar.to/>, <http://blog.datagraph.org/> ;
-  doap:vendor        <http://datagraph.org/> ;
-  doap:developer     <http://ar.to/#self>, <http://bhuga.net/#ben>, <http://greggkellogg.net/foaf#me> ;
-  doap:maintainer    <http://ar.to/#self>, <http://bhuga.net/#ben>, <http://greggkellogg.net/foaf#me> ;
-  doap:documenter    <http://ar.to/#self>, <http://bhuga.net/#ben>, <http://greggkellogg.net/foaf#me> ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Călin Ardelean" ;
-                      foaf:mbox_sha1sum "274bd18402fc773ffc0606996aa1fb90b603aa29"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Danny Gagne" ;
-                      foaf:mbox_sha1sum "6de43e9cf7de53427fea9765706703e4d957c17b"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Joey Geiger" ;
-                      foaf:mbox_sha1sum "f412d743150d7b27b8468d56e69ca147917ea6fc"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Fumihiro Kato" ;
-                      foaf:mbox_sha1sum "d31fdd6af7a279a89bf09fdc9f7c44d9d08bb930"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Naoki Kawamukai" ;
-                      foaf:mbox_sha1sum "5bdcd8e2af4f5952aaeeffbdd371c41525ec761d"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Hellekin O. Wolf" ;
-                      foaf:mbox_sha1sum "c69f3255ff0639543cc5edfd8116eac8df16fab8"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "John Fieber" ;
-                      foaf:mbox_sha1sum "f7653fc1ac0e82ebb32f092389bd5fc728eaae12"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Keita Urashima" ;
-                      foaf:mbox_sha1sum "2b4247b6fd5bb4a1383378f325784318680d5ff9"] ;
-  doap:helper        [a foaf:Person ;
-                      foaf:name "Pius Uzamere" ;
-                      foaf:mbox_sha1sum "bedbbf2451e5beb38d59687c0460032aff92cd3c"] ;
-  foaf:maker         <http://ar.to/#self> ;
-  dc:creator         <http://ar.to/#self> .
+  doap:download-page <https://github.com/ruby-rdf/rdf-vituoso/> ;
+  doap:bug-database  <https://github.com/ruby-rdf/rdf-vituoso/issues>;
+  doap:blog          <https://greggkellogg.net/> ;
+  doap:developer     _:benjamin, _:peter ;
+  doap:maintainer    _:benjamin, _:peterm, <https://greggkellogg.net/foaf#me> ;
+  doap:documenter    <https://greggkellogg.net/foaf#me> ;
+  doap:helper        <https://greggkellogg.net/foaf#me> ;
+  foaf:maker         _:benjamin, _:peter ;
+  dc:creator         _:benjamin, _:peter .
+
+_:benjamin a foaf:Person ;
+  foaf:name "Benjamin Rokseth" ;
+  foaf:mbox_sha1sum "dd7173eb5e13c9b95266b7deeba34c0130de02d1" .
+
+_:peter a foaf:Person ; foaf:name "Peter Kordel" .

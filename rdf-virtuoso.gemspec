@@ -1,11 +1,12 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path('../lib', __FILE__)
-require 'rdf/virtuoso/version'
+require 'rdf/virtuoso'
 
 Gem::Specification.new do |s|
   s.name        = 'rdf-virtuoso'
-  s.version     = RDF::Virtuoso::VERSION
+  s.version     = File.read('VERSION').chomp
   s.platform    = Gem::Platform::RUBY
+  s.date        = File.mtime('VERSION').strftime('%Y-%m-%d')
   s.authors     = ['Benjamin Rokseth', 'Peter Kordel']
   s.email       = ['benjamin.rokseth@kul.oslo.kommune.no']
   s.homepage    = 'https://github.com/digibib/rdf-virtuoso'
@@ -19,7 +20,7 @@ Gem::Specification.new do |s|
   s.files        += Dir['spec/**/*.rb'] + Dir['doc/**/**/*.rb']
   s.require_paths = ['lib']
 
-  s.add_runtime_dependency 'rdf', '>= 3.1'
+  s.add_runtime_dependency 'rdf', '~> 3.1'
   s.add_runtime_dependency 'httparty', '~> 0.18.1'
   s.add_runtime_dependency 'api_smith', '~> 1.3.0'
 

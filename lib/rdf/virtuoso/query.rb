@@ -29,8 +29,8 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}] options
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#ask
-    def self.ask(options = {})
-      self.new(:ask, options)
+    def self.ask(**options)
+      self.new(:ask, **options)
     end
 
     ##
@@ -40,9 +40,8 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}] options
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#select
-    def self.select(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:select, options).select(*variables)
+    def self.select(*variables, **options)
+      self.new(:select, **options).select(*variables)
     end
 
     ##
@@ -52,9 +51,8 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}]  options
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#describe
-    def self.describe(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:describe, options).describe(*variables)
+    def self.describe(*variables, **options)
+      self.new(:describe, **options).describe(*variables)
     end
 
     ##
@@ -64,9 +62,8 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}]            options
     # @return [Query]
     # @see    http://www.w3.org/TR/rdf-sparql-query/#construct
-    def self.construct(*patterns)
-      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:construct, options).construct(*patterns) # FIXME
+    def self.construct(*patterns, **options)
+      self.new(:construct, **options).construct(*patterns) # FIXME
     end
 
     ##
@@ -76,40 +73,32 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}]            options
     # @return [Query]
     # @see    http://www.w3.org/Submission/SPARQL-Update/
-    def self.insert_data(*patterns)
-      # options = variables.last.is_a?(Hash) ? variables.pop : {}
-      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:insert_data, options).insert_data(*patterns) 
+    def self.insert_data(*patterns, **options)
+      self.new(:insert_data, **options).insert_data(*patterns) 
     end
 
-    def self.insert(*patterns)
-      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:insert, options).insert(*patterns) 
+    def self.insert(*patterns, **options)
+      self.new(:insert, **options).insert(*patterns) 
     end
 
-    def self.delete_data(*patterns)
-      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:delete_data, options).delete_data(*patterns)
+    def self.delete_data(*patterns, **options)
+      self.new(:delete_data, **options).delete_data(*patterns)
     end
 
-    def self.delete(*patterns)
-      options = patterns.last.is_a?(Hash) ? patterns.pop : {}
-      self.new(:delete, options).delete(*patterns) 
+    def self.delete(*patterns, **options)
+      self.new(:delete, **options).delete(*patterns) 
     end
     
-    def self.create(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:create, options).create(variables.first)
+    def self.create(*variables, **options)
+      self.new(:create, **options).create(variables.first)
     end
 
-    def self.drop(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:drop, options).drop(variables.first)
+    def self.drop(*variables, **options)
+      self.new(:drop, **options).drop(variables.first)
     end
 
-    def self.clear(*variables)
-      options = variables.last.is_a?(Hash) ? variables.pop : {}
-      self.new(:clear, options).clear(variables.first)
+    def self.clear(*variables, **options)
+      self.new(:clear, **options).clear(variables.first)
     end
 
     ##
@@ -117,9 +106,9 @@ module RDF::Virtuoso
     # @param  [Hash{Symbol => Object}] options
     # @yield  [query]
     # @yieldparam [Query]
-    def initialize(form = :ask, options = {}, &block)
+    def initialize(form = :ask, **options, &block)
       @form = form.respond_to?(:to_sym) ? form.to_sym : form.to_s.to_sym
-      super([], options, &block)
+      super([], **options, &block)
     end
 
     ##

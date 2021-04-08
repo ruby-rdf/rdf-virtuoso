@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/ruby-rdf/rdf-virtuoso'
   s.summary     = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store}
   s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store.\nSupports SPARQL 1.1 UPDATE extensions and some Virtuoso specific commands.}
-  s.licenses    = ['GPL-3.0']
+  s.license     = 'Unlicense'
 
   s.files         = %w(README.md LICENSE VERSION) + Dir.glob('lib/**/*.rb')
   s.require_paths = ['lib']

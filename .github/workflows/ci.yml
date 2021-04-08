@@ -23,7 +23,8 @@ jobs:
           - 2.5
           - 2.6
           - 2.7
-          #- ruby-head # Eventualy
+          - 3.0
+          - ruby-head # Eventualy
           - jruby
     steps:
       - name: Clone repository

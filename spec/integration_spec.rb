@@ -27,5 +27,9 @@ describe RDF::Virtuoso::Repository do
       query = RDF::Virtuoso::Query.select.where([RDF::Resource('http://localhost:8890/sparql'), :p, :o])
       expect(repo.select(query).count).to eql 14
     end
+
+    it_behaves_like "an RDF::Repository" do
+        let(:repository) {repo}
+    end
   end
 end

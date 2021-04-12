@@ -26,6 +26,16 @@ jobs:
           - 3.0
           - ruby-head # Eventualy
           - jruby
+    services: 
+      virtuoso:
+        image: tenforce/virtuoso
+        env:
+          DBA_PASSWORD: tester
+          SPARQL_UPDATE: true
+          DEFAULT_GRAPH: test:graph
+        ports:
+          - 8890:8890
+          - 1111:1111
     steps:
       - name: Clone repository
         uses: actions/checkout@v2

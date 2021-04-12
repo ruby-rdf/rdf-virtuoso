@@ -28,8 +28,9 @@ describe RDF::Virtuoso::Repository do
       expect(repo.select(query).count).to eql 14
     end
 
-    it_behaves_like "an RDF::Repository" do
-        let(:repository) {repo}
-    end
+    # it_behaves_like "an RDF::Repository" do
+    #     let(:repository) {repo}
+    # end
+
   end
 end

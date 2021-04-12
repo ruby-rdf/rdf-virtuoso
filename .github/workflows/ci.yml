@@ -31,8 +31,7 @@ jobs:
         image: tenforce/virtuoso
         env:
           DBA_PASSWORD: tester
-          SPARQL_UPDATE: true
-          DEFAULT_GRAPH: test:graph
+          SPARQL_UPDATE: true          
         ports:
           - 8890:8890
           - 1111:1111

@@ -1,4 +1,4 @@
-$:.unshift "."
+$:.unshift '.'
 require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'rdf/spec/repository'
 
@@ -9,24 +9,23 @@ require 'rdf/spec/repository'
 #   docker stop virtuoso-testing
 
 describe RDF::Virtuoso::Repository do
-    context('when interating with a virtuoso repository instance') do
-        let(:uri) {"http://localhost:8890/sparql"}
-        let(:update_uri) {"http://localhost:8890/sparql-auth"}
-        let(:repo) {RDF::Virtuoso::Repository.new(uri)}
-        let(:password) {'tester'}
-        let(:username) {'dba'}
-        let(:repo) {
-            RDF::Virtuoso::Repository.new(uri,
-                update_uri: update_uri,
-                username: username,
-                password: password,
-                auth_method: 'digest')                
-        }
-
-        it 'should be able to select' do           
-            query = RDF::Virtuoso::Query.select.where([RDF::Resource('http://localhost:8890/sparql'), :p, :o])
-            expect(repo.select(query).count).to eql 14
-        end
+  context('when interating with a virtuoso repository instance') do
+    let(:uri) { 'http://localhost:8890/sparql' }
+    let(:update_uri) { 'http://localhost:8890/sparql-auth' }
+    let(:repo) { RDF::Virtuoso::Repository.new(uri) }
+    let(:password) { 'tester' }
+    let(:username) { 'dba' }
+    let(:repo) do
+      RDF::Virtuoso::Repository.new(uri,
+                                    update_uri: update_uri,
+                                    username: username,
+                                    password: password,
+                                    auth_method: 'digest')
     end
+
+    it 'should be able to select' do
+      query = RDF::Virtuoso::Query.select.where([RDF::Resource('http://localhost:8890/sparql'), :p, :o])
+      expect(repo.select(query).count).to eql 14
+    end
+  end
 end
-    

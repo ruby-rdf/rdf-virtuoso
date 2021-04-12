@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
       - name: Wait to give Virtuoso a little extra time
-        run: jakejarvis/wait-action@master
+        uses: jakejarvis/wait-action@master
         with:
           time: '3s'
       - name: Run tests

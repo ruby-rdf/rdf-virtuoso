@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
+      VIRTUOSO_INTEGRATION_TESTS: true
     strategy:
       fail-fast: false
       matrix:

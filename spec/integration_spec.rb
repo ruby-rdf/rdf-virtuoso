@@ -46,8 +46,8 @@ describe RDF::Virtuoso::Repository do
       repository.delete(query)
     end
 
-    # it_behaves_like "an RDF::Repository" do
-    #     let(:repository) {subject}
-    # end
+    # commented out until conformance issues are resolved, otherwise there are many errors
+    # it_behaves_like "an RDF::Repository"        
+
   end
 end

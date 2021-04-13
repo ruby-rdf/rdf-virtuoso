@@ -1,4 +1,6 @@
-$:.unshift '.'
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift '.'
 require File.join(File.dirname(__FILE__), 'spec_helper')
 require 'rdf/spec/repository'
 
@@ -9,28 +11,43 @@ require 'rdf/spec/repository'
 #   docker stop virtuoso-testing
 
 describe RDF::Virtuoso::Repository do
-  context('when interating with a virtuoso repository instance') do
-    let(:uri) { 'http://localhost:8890/sparql' }
-    let(:update_uri) { 'http://localhost:8890/sparql-auth' }
-    let(:repo) { RDF::Virtuoso::Repository.new(uri) }
-    let(:password) { 'tester' }
-    let(:username) { 'dba' }
-    let(:repo) do
-      RDF::Virtuoso::Repository.new(uri,
-                                    update_uri: update_uri,
-                                    username: username,
-                                    password: password,
-                                    auth_method: 'digest')
+  context('when interacting with a virtuoso repository instance') do
+    subject(:repository) do
+      described_class.new(uri,
+                          update_uri: update_uri,
+                          username: username,
+                          password: password,
+                          auth_method: 'digest')
     end
 
-    it 'should be able to select' do
-      query = RDF::Virtuoso::Query.select.where([RDF::Resource('http://localhost:8890/sparql'), :p, :o])
-      expect(repo.select(query).count).to eql 14
+    let(:uri) { 'http://localhost:8890/sparql' }
+    let(:update_uri) { 'http://localhost:8890/sparql-auth' }
+    let(:password) { 'tester' }
+    let(:username) { 'dba' }
+    let(:graph) { 'http://example.org/' }
+
+    it 'is able to select' do
+      # check a single triple result which is unlikely to change
+
+      query = RDF::Virtuoso::Query.select.where([RDF::URI('http://localhost:8890/sparql'),
+                                                 RDF::URI('http://www.w3.org/ns/sparql-service-description#endpoint'), :o])
+
+      expect(repository.select(query).last.o).to eql RDF::URI('http://localhost:8890/sparql')
+    end
+
+    it 'is able to insert' do
+      query = RDF::Virtuoso::Query.insert([RDF::URI('subject:person'), RDF::URI('http://purl.org/dc/terms/title'),
+                                           'The title']).graph(graph)
+      expect(repository.insert(query)).to eql 'Insert into <http://example.org/>, 1 (or less) triples -- done'
+
+      # #clean up
+      query = RDF::Virtuoso::Query.delete([RDF::URI('subject:person'), :p,
+                                           :o]).where([RDF::URI('subject:person'), :p, :o]).graph(graph)
+      repository.delete(query)
     end
 
     # it_behaves_like "an RDF::Repository" do
-    #     let(:repository) {repo}
+    #     let(:repository) {subject}
     # end
-
   end
 end

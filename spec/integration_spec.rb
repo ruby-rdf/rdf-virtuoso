@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 $LOAD_PATH.unshift '.'
-require File.join(File.dirname(__FILE__), 'spec_helper')
+require_relative 'spec_helper'
 require 'rdf/spec/repository'
 
 # these tests rely on a Virtuoso service being available, at port 8890

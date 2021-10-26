@@ -16,6 +16,7 @@ jobs:
     env:
       CI: true
       VIRTUOSO_INTEGRATION_TESTS: true
+      ALLOW_FAILURES: ${{ endsWith(matrix.ruby, 'head') }}
     strategy:
       fail-fast: false
       matrix:
@@ -50,5 +51,5 @@ jobs:
         with:
           time: '3s'
       - name: Run tests
-        run: bundle exec rspec spec
+        run: ruby --version; bundle exec rspec spec || $ALLOW_FAILURES
  

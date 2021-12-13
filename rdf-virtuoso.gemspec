@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+2# -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
   s.name        = 'rdf-virtuoso'
@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_runtime_dependency 'rdf', '~> 3.1'
-  s.add_runtime_dependency 'httparty', '~> 0.18.1'
+  s.add_runtime_dependency 'httparty', '~> 0.20'
   s.add_runtime_dependency 'api_smith', '~> 1.3.0'
 
   s.add_development_dependency 'rspec', '~> 3.10'
-  s.add_development_dependency 'rdf-spec', '~> 3.1'
-  s.add_development_dependency 'rdf-vocab', '~> 3.1'
+  s.add_development_dependency 'rdf-spec', '~> 3.2'
+  s.add_development_dependency 'rdf-vocab', '~> 3.2'
 
 end

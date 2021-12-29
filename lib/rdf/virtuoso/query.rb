@@ -240,7 +240,7 @@ module RDF::Virtuoso
       self
     end
     
-    # @param RDF::URI uri
+    # @param [RDF::URI] uri
     # @return [Query]
     # @see http://www.w3.org/TR/rdf-sparql-query/#specDataset
     def from(uri)
@@ -248,14 +248,14 @@ module RDF::Virtuoso
       self
     end
 
-    # @param RDF::URI uri
+    # @param [RDF::URI] uri
     # @return [Query]
     def from_named(uri)
       (options[:from_named] ||= []) << uri
       self
     end
 
-    # @param RDF::URI uri
+    # @param [RDF::URI] uri
     # @return [Query]
     def graph(uri)
       options[:graph] = uri
@@ -284,7 +284,7 @@ module RDF::Virtuoso
     end
 
     ##
-    # @param RDF::URI uri
+    # @param [RDF::URI] uri
     # @return [Query]
     # Inline version of graph
     def graph2(uri)
@@ -710,7 +710,7 @@ module RDF::Virtuoso
     ##
     # Serializes an RDF::Value into a format appropriate for select, construct, and where clauses
     #
-    # @param  [RDF::Value]
+    # @param  [RDF::Value] value
     # @return [String]
     # @private
     def serialize_value(value)

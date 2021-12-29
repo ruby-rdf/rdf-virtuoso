@@ -3,4 +3,6 @@
 Gemfile.lock
 pkg/*
 .idea/
+.yardoc/
 /.byebug_history
+doc/*

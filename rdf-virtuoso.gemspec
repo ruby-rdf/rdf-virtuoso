@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store}
   s.description = %q{An RDF.rb extension library for interacting with a Virtuoso rdf store.\nSupports SPARQL 1.1 UPDATE extensions and some Virtuoso specific commands.}
   s.license     = 'Unlicense'
-  gem.metadata           = {
+  s.metadata           = {
     "documentation_uri" => "https://ruby-rdf.github.io/rdf-virtuoso",
     "bug_tracker_uri"   => "https://github.com/ruby-rdf/rdf-virtuoso/issues",
     "homepage_uri"      => "https://github.com/ruby-rdf/rdf-virtuoso",

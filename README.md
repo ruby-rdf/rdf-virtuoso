@@ -95,4 +95,4 @@ see <https://unlicense.org/> or the accompanying {file:LICENSE} file.
 [PDD]:              https://unlicense.org/#unlicensing-contributions
 [YARD]:             https://yardoc.org/
 [YARD-GS]:          https://rubydoc.info/docs/yard/file/docs/GettingStarted.md
-[RDF.rb]:       https://rubydoc.info/github/ruby-rdf/rdf
+[RDF.rb]:       https://ruby-rdf.github.io/rdf

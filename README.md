@@ -2,7 +2,7 @@
 
 The intent of this class is to act as an abstraction for clients wishing to connect and manipulate linked data stored in a Virtuoso Quad store.
 
-[![Gem Version](https://badge.fury.io/rb/rdf-virtuoso.png)](https://badge.fury.io/rb/rdf-virtuoso)
+[![Gem Version](https://badge.fury.io/rb/rdf-virtuoso.svg)](https://badge.fury.io/rb/rdf-virtuoso)
 [![Build Status](https://github.com/ruby-rdf/rdf-virtuoso/workflows/CI/badge.svg?branch=develop)](https://github.com/ruby-rdf/rdf-virtuoso/actions?query=workflow%3ACI)
 [![Gitter chat](https://badges.gitter.im/ruby-rdf/rdf.png)](https://gitter.im/ruby-rdf/rdf)
 
